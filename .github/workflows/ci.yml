@@ -10,6 +10,16 @@ jobs:
   validate-and-test:
     name: Build, Lint & Test Suite
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      AI_DEFAULT_PROVIDER: mock
+      GROQ_API_KEY: mock_groq_key_ci
+      SUPABASE_URL: http://localhost:54321
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.dummy_anon_key
+      SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.dummy_service_key
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
+      NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.dummy_anon_key
 
     steps:
       - name: Checkout repository
