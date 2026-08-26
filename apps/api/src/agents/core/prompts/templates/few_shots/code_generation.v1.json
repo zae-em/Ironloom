@@ -1,0 +1,6 @@
+[
+  {
+    "input": "Create a function to calculate exponential backoff delay with jitter in TypeScript.",
+    "output": "```typescript\nexport function calculateBackoffWithJitter(attempt: number, baseMs = 1000, maxMs = 30000): number {\n  const expDelay = Math.min(maxMs, baseMs * Math.pow(2, attempt));\n  const jitter = Math.random() * 0.3 * expDelay;\n  return Math.floor(expDelay + jitter);\n}\n```"
+  }
+]

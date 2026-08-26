@@ -1,0 +1,36 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { loadConfig } from './config/app.config';
+import { RedisModule } from './redis/redis.module';
+import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
+import { RateLimiterModule } from './rate-limiter/rate-limiter.module';
+import { AiGatewayModule } from './ai-gateway/ai-gateway.module';
+import { AgentsCoreModule } from './agents/core/agents-core.module';
+import { UsersModule } from './users/users.module';
+import { OrganizationsModule } from './organizations/organizations.module';
+import { ProjectsModule } from './projects/projects.module';
+import { RAGModule } from './rag/rag.module';
+import { SdlcModule } from './sdlc/sdlc.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [loadConfig],
+      envFilePath: ['.env', '../../.env'],
+    }),
+    RedisModule,
+    DatabaseModule,
+    AuthModule,
+    RateLimiterModule,
+    AiGatewayModule,
+    AgentsCoreModule,
+    UsersModule,
+    OrganizationsModule,
+    ProjectsModule,
+    RAGModule,
+    SdlcModule,
+  ],
+})
+export class AppModule {}

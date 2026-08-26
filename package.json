@@ -1,0 +1,46 @@
+{
+  "name": "ironloom-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IRONLOOM - AI-Powered Software Engineering Operating System",
+  "scripts": {
+    "build": "pnpm --filter \"@ironloom/shared\" run build && pnpm --filter \"@ironloom/*\" run build",
+    "dev:api": "pnpm --filter @ironloom/api start:dev",
+    "dev:web": "pnpm --filter @ironloom/web dev",
+    "lint": "pnpm -r run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,sql}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,sql}\"",
+    "test": "pnpm --filter @ironloom/api test",
+    "test:unit": "pnpm --filter @ironloom/api test:unit",
+    "test:e2e": "pnpm --filter @ironloom/api test:e2e",
+    "gateway:test": "pnpm --filter @ironloom/api gateway:test",
+    "db:migrate": "pnpm --filter @ironloom/api db:migrate",
+    "db:seed": "pnpm --filter @ironloom/api db:seed",
+    "db:reset": "pnpm --filter @ironloom/api db:reset"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,sql,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}
