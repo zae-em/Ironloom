@@ -22,7 +22,7 @@ export class GroqAdapter implements IProviderAdapter {
   async complete(request: AiGatewayRequest, overrideModel?: string): Promise<ProviderCompletionResult> {
     const apiKey = this.configService.get<string>('aiGateway.groq.apiKey') || process.env.GROQ_API_KEY;
     const baseUrl = this.configService.get<string>('aiGateway.groq.baseUrl', 'https://api.groq.com/openai/v1');
-    const defaultModel = this.configService.get<string>('aiGateway.groq.defaultModel', 'llama-3.3-70b-versatile');
+    const defaultModel = this.configService.get<string>('aiGateway.groq.defaultModel', 'qwen/qwen3.8-27b');
     const timeoutMs = this.configService.get<number>('aiGateway.groq.timeoutMs', 30000);
     const model = overrideModel || request.model || defaultModel;
 
