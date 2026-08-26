@@ -12,6 +12,7 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { ProjectsModule } from './projects/projects.module';
 import { RAGModule } from './rag/rag.module';
 import { SdlcModule } from './sdlc/sdlc.module';
+import { OrchestrationModule } from './orchestration/orchestration.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { SdlcModule } from './sdlc/sdlc.module';
     ProjectsModule,
     RAGModule,
     SdlcModule,
+    OrchestrationModule,
   ],
 })
 export class AppModule {}

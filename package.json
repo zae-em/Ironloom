@@ -14,6 +14,7 @@
     "test:unit": "pnpm --filter @ironloom/api test:unit",
     "test:e2e": "pnpm --filter @ironloom/api test:e2e",
     "gateway:test": "pnpm --filter @ironloom/api gateway:test",
+    "eval:run": "pnpm --filter @ironloom/api eval:run",
     "db:migrate": "pnpm --filter @ironloom/api db:migrate",
     "db:seed": "pnpm --filter @ironloom/api db:seed",
     "db:reset": "pnpm --filter @ironloom/api db:reset"

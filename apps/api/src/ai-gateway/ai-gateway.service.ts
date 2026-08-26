@@ -48,7 +48,7 @@ export class AiGatewayService {
 
     const primaryProvider =
       request.preferredProvider ||
-      (defaultProvider === 'mock' ? 'mock' : options.agentDefaultProvider) ||
+      options.agentDefaultProvider ||
       defaultProvider;
 
     const fallbackProviders =

@@ -20,6 +20,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly configService: ConfigService) {}
 
   async onModuleInit() {
+    if (process.env.AI_DEFAULT_PROVIDER === 'mock' || process.env.NODE_ENV === 'test') {
+      this.isConnected = false;
+      return;
+    }
+
     const host = this.configService.get<string>('redis.host', 'localhost');
     const port = this.configService.get<number>('redis.port', 6379);
     const password = this.configService.get<string>('redis.password');

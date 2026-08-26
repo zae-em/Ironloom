@@ -1,0 +1,32 @@
+[
+  {
+    "id": "eval-fixture-1",
+    "domain": "Aerospace / Robotics",
+    "rawIdea": "Build an autonomous obstacle avoidance telemetry streaming system for drone swarms that alerts human operators under 100ms budget.",
+    "expectedTopics": ["obstacle avoidance", "telemetry", "latency", "real-time", "operators", "drone"],
+    "minimumEpics": 2,
+    "minimumStoriesPerEpic": 1,
+    "requireGherkin": true,
+    "minimumComponents": 3
+  },
+  {
+    "id": "eval-fixture-2",
+    "domain": "Fintech / Payments",
+    "rawIdea": "Create a PCI-compliant real-time fraud anomaly detection engine with sub-50ms inference and zero-trust audit trail.",
+    "expectedTopics": ["fraud", "anomaly", "pci", "audit", "latency", "real-time"],
+    "minimumEpics": 2,
+    "minimumStoriesPerEpic": 1,
+    "requireGherkin": true,
+    "minimumComponents": 3
+  },
+  {
+    "id": "eval-fixture-3",
+    "domain": "Healthcare / Radiology",
+    "rawIdea": "Develop an automated DICOM chest X-ray triaging pipeline with HIPAA compliance, high-confidence bounding boxes, and physician sign-off gates.",
+    "expectedTopics": ["dicom", "x-ray", "hipaa", "triage", "physician", "radiology"],
+    "minimumEpics": 2,
+    "minimumStoriesPerEpic": 1,
+    "requireGherkin": true,
+    "minimumComponents": 3
+  }
+]

@@ -22,12 +22,17 @@ export class SupabaseService {
     const serviceKey = this.configService.get<string>('supabase.serviceRoleKey', 'dummy_service_key');
     const dbUrl = this.configService.get<string>('supabase.databaseUrl');
 
+    if (process.env.AI_DEFAULT_PROVIDER === 'mock' || this.configService.get('aiGateway.defaultProvider') === 'mock') {
+      this.isServerOnline = false;
+      this.lastCheckedTime = Date.now() + 10000000;
+    }
+
     const fastFetch = async (input: any, init: any) => {
-      const now = Date.now();
-      if (this.isServerOnline === false && now - this.lastCheckedTime < this.checkIntervalMs) {
+      if (process.env.AI_DEFAULT_PROVIDER === 'mock' || this.isServerOnline === false) {
         throw new Error('Supabase server offline (in-memory fallback active)');
       }
 
+      const now = Date.now();
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 150);
 
@@ -74,6 +79,16 @@ export class SupabaseService {
         this.logger.warn(`Postgres pool init warning: ${err.message}`);
       }
     }
+  }
+
+  /**
+   * Checks if Supabase server is available for live queries or if in-memory fallback should be used immediately.
+   */
+  isServerAvailable(): boolean {
+    if (process.env.AI_DEFAULT_PROVIDER === 'mock' || process.env.NODE_ENV === 'test') {
+      return false;
+    }
+    return this.isServerOnline !== false;
   }
 
   /**

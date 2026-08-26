@@ -16,6 +16,7 @@
     "test:unit": "jest --testPathPattern=src/.*\\.spec\\.ts",
     "test:e2e": "jest --testPathPattern=test/.*\\.spec\\.ts",
     "gateway:test": "ts-node -r dotenv/config src/scripts/gateway-test.ts",
+    "eval:run": "ts-node -r dotenv/config src/scripts/eval-runner.ts",
     "db:migrate": "ts-node -r dotenv/config src/scripts/db-migrate.ts",
     "db:seed": "ts-node -r dotenv/config src/scripts/db-seed.ts",
     "db:reset": "ts-node -r dotenv/config src/scripts/db-reset.ts"
