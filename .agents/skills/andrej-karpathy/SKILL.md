@@ -16,11 +16,13 @@ This skill embodies the core philosophy, mental models, and practical recipes ch
 ## 🧠 1. The Core Karpathy Philosophy
 
 ### A. First Principles & Build From Scratch
+
 - **No Black Boxes**: Truly understand every layer of the stack before using higher-level abstractions.
 - **Deconstruct the Math**: Understand the forward pass, backward pass, cross-entropy loss, softmax temperature, multi-head self-attention, and positional embeddings down to raw tensor operations.
 - **Minimal Dependencies**: Prefer clean, pure, dependency-light code that fits in a single readable file over bloated frameworks.
 
 ### B. The LLM as Operating System (Software 2.0)
+
 - **CPU**: The LLM core (transformer weights, reasoning engine).
 - **RAM**: Context window (working memory, sliding attention).
 - **Disk / Long-Term Storage**: Vector databases, pgvector RAG, filesystem artifacts.
@@ -32,26 +34,31 @@ This skill embodies the core philosophy, mental models, and practical recipes ch
 ## 🔬 2. The Step-by-Step Recipe for Building AI Systems
 
 ### Step 1: Become One with the Data
+
 - **Always inspect raw data**: Print out sample tokens, dataset rows, prompt interpolations, and embeddings before training or querying.
 - **Look for anomalies**: Check character encodings, trailing whitespace, corrupted sequences, and class imbalances.
 - **Inspect failures**: When a model produces a bad output, trace the exact prompt, token count, temperature, and retrieved RAG context.
 
 ### Step 2: Establish the End-to-End Baseline & Leak-Proof Metric
+
 - Build the simplest possible end-to-end pipeline first (e.g. a naive heuristic, linear baseline, or basic prompt template).
 - Fix deterministic seeds for reproducibility.
 - Ensure zero data leakage between train/test or retrieval/generation splits.
 
 ### Step 3: Overfit a Single Batch (Sanity Check)
+
 - Before training on large datasets or building massive agent chains:
   - Take 1–2 samples.
   - Verify that training loss drops to zero (or that the minimal test case produces the exact expected JSON schema).
   - Verify gradients or response contracts are strictly valid.
 
 ### Step 4: Scale Systematically & Monitor
+
 - Track loss curves (train vs validation), perplexity, learning rate schedules (cosine decay with linear warmup), gradient clipping, and token throughput.
 - Tune hyperparameters systematically: learning rate, weight decay, batch size, dropout.
 
 ### Step 5: Optimize & Remove Bottlenecks
+
 - Memory-bandwidth awareness: KV caching, FlashAttention, kernel fusion, quantization (int8/int4), efficient matrix multiplication layout.
 
 ---

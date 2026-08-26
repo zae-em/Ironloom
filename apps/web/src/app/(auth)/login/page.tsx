@@ -4,7 +4,14 @@ import * as React from 'react';
 import { getSupabase } from '../../../lib/supabase';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ArrowRight, Bot } from 'lucide-react';
@@ -28,7 +35,11 @@ export default function LoginPage() {
 
       if (error) {
         // In local development mode without a live Supabase server, create a test session token
-        if (error.message.includes('fetch') || error.message.includes('Failed to fetch') || error.message.includes('Invalid login')) {
+        if (
+          error.message.includes('fetch') ||
+          error.message.includes('Failed to fetch') ||
+          error.message.includes('Invalid login')
+        ) {
           const testToken = `test_user_11111111-1111-1111-1111-111111111111`;
           localStorage.setItem('ironloom_jwt', testToken);
           toast.success('Logged in with local session token!');
@@ -58,15 +69,15 @@ export default function LoginPage() {
             <Bot className="h-6 w-6" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">IRONLOOM OS</CardTitle>
-          <CardDescription>
-            AI-Powered Software Engineering Operating System
-          </CardDescription>
+          <CardDescription>AI-Powered Software Engineering Operating System</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleLogin}>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">Email</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Email
+              </label>
               <Input
                 type="email"
                 placeholder="name@company.com"

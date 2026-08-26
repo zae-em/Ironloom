@@ -13,7 +13,9 @@ describe('Audit Log & Cost Accounting Unit Tests', () => {
       imports: [
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [() => ({ supabase: { url: 'http://localhost:54321', serviceRoleKey: 'test_key' } })],
+          load: [
+            () => ({ supabase: { url: 'http://localhost:54321', serviceRoleKey: 'test_key' } }),
+          ],
         }),
       ],
       providers: [AuditLogRepository, SupabaseService, CostCalculatorService],

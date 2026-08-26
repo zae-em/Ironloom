@@ -7,7 +7,8 @@ dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 async function runMigration() {
-  const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:54322/postgres';
+  const dbUrl =
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:54322/postgres';
   console.log(`[DB Migrate] Connecting to PostgreSQL at ${dbUrl.replace(/:[^:@]+@/, ':***@')}...`);
 
   const client = new Client({ connectionString: dbUrl });
@@ -16,7 +17,10 @@ async function runMigration() {
     await client.connect();
     console.log('[DB Migrate] Connected successfully.');
 
-    const migrationPath = path.resolve(__dirname, '../../../../infra/migrations/001_initial_schema.sql');
+    const migrationPath = path.resolve(
+      __dirname,
+      '../../../../infra/migrations/001_initial_schema.sql',
+    );
     if (!fs.existsSync(migrationPath)) {
       throw new Error(`Migration file not found at ${migrationPath}`);
     }

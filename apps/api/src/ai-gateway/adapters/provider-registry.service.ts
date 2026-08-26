@@ -20,7 +20,9 @@ export class ProviderRegistryService implements OnModuleInit {
     this.register(this.ollamaAdapter);
     this.register(this.groqAdapter);
     this.register(this.mockAdapter);
-    this.logger.log(`Initialized AI Gateway Provider Registry with [${this.getAvailableProviderNames().join(', ')}]`);
+    this.logger.log(
+      `Initialized AI Gateway Provider Registry with [${this.getAvailableProviderNames().join(', ')}]`,
+    );
   }
 
   register(adapter: IProviderAdapter): void {

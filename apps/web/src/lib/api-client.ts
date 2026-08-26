@@ -36,13 +36,16 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   let token: string | null = null;
   try {
     const supabase = getSupabase();
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     token = session?.access_token || null;
   } catch {}
 
   // Fallback to local session storage token if available
   if (!token && typeof window !== 'undefined') {
-    token = localStorage.getItem('ironloom_jwt') || 'mock_user_11111111-1111-1111-1111-111111111111';
+    token =
+      localStorage.getItem('ironloom_jwt') || 'mock_user_11111111-1111-1111-1111-111111111111';
   }
 
   const headers: Record<string, string> = {
@@ -55,7 +58,8 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   }
 
   // Active Organization header for backend RLS scope
-  const activeOrg = orgId || (typeof window !== 'undefined' ? localStorage.getItem('ironloom_active_org') : null);
+  const activeOrg =
+    orgId || (typeof window !== 'undefined' ? localStorage.getItem('ironloom_active_org') : null);
   if (activeOrg) {
     headers['x-org-id'] = activeOrg;
   }

@@ -1,9 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  WorkflowNodeName,
-  WorkflowRun,
-  WorkflowStatePayload,
-} from '@ironloom/shared';
+import { WorkflowNodeName, WorkflowRun, WorkflowStatePayload } from '@ironloom/shared';
 import { BusinessAnalystAgent } from '../../agents/sdlc/business-analyst.agent';
 import { ProductManagerAgent } from '../../agents/sdlc/product-manager.agent';
 import { RequirementsEngineerAgent } from '../../agents/sdlc/requirements-engineer.agent';
@@ -250,7 +246,10 @@ export class SdlcGraphEngine {
             node: 'requirements_node',
             timestamp: new Date().toISOString(),
             summary: `Synthesized ${allStories.length} user stories with Gherkin scenarios`,
-            outputSnippet: allStories.slice(0, 3).map((s) => s.title).join(', '),
+            outputSnippet: allStories
+              .slice(0, 3)
+              .map((s) => s.title)
+              .join(', '),
           });
 
           // Create First-Class Approval Request Gate

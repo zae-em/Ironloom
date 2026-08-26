@@ -35,13 +35,18 @@ export class SupabaseAuthGuard implements CanActivate {
       } else {
         // Attempt Supabase auth verification
         const adminClient = this.supabaseService.getAdminClient();
-        const { data: { user }, error } = await adminClient.auth.getUser(token);
+        const {
+          data: { user },
+          error,
+        } = await adminClient.auth.getUser(token);
 
         if (error || !user) {
           // Attempt payload decode if direct auth service check fails (e.g. self-signed mock JWT in testing)
           const decoded = this.decodeJwtPayload(token);
           if (!decoded?.sub) {
-            throw new UnauthorizedException(`Invalid token: ${error?.message || 'Token decode failed'}`);
+            throw new UnauthorizedException(
+              `Invalid token: ${error?.message || 'Token decode failed'}`,
+            );
           }
           userId = decoded.sub;
           email = decoded.email || `${userId}@ironloom.local`;
@@ -53,8 +58,10 @@ export class SupabaseAuthGuard implements CanActivate {
 
       // 2. Load user organization memberships
       const memberships = await this.getUserMemberships(userId);
-      const requestedOrgId = (request.headers['x-org-id'] as string) || request.body?.orgId || memberships[0]?.orgId;
-      const activeMembership = memberships.find((m) => m.orgId === requestedOrgId) || memberships[0];
+      const requestedOrgId =
+        (request.headers['x-org-id'] as string) || request.body?.orgId || memberships[0]?.orgId;
+      const activeMembership =
+        memberships.find((m) => m.orgId === requestedOrgId) || memberships[0];
 
       const authContext: AuthUserContext = {
         userId,

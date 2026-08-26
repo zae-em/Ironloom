@@ -51,12 +51,16 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
       this.client.on('error', (err) => {
         this.isConnected = false;
-        this.logger.warn(`Redis connection error: ${err.message}. Operating in resilient memory-fallback mode.`);
+        this.logger.warn(
+          `Redis connection error: ${err.message}. Operating in resilient memory-fallback mode.`,
+        );
       });
 
       await this.client.connect().catch((err) => {
         this.isConnected = false;
-        this.logger.warn(`Could not connect to Redis: ${err.message}. Defaulting to in-memory store.`);
+        this.logger.warn(
+          `Could not connect to Redis: ${err.message}. Defaulting to in-memory store.`,
+        );
       });
     } catch (err: any) {
       this.isConnected = false;

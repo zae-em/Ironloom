@@ -168,9 +168,16 @@ export function TraceabilityDrawer({
                     </div>
                     <h4 className="text-sm font-bold text-white">{upstreamData.story.title}</h4>
                     <p className="text-xs text-slate-300">
-                      As a <span className="text-purple-300 font-medium">{upstreamData.story.asA}</span>, I want{' '}
-                      <span className="text-purple-300 font-medium">{upstreamData.story.iWant}</span> so that{' '}
-                      <span className="text-purple-300 font-medium">{upstreamData.story.soThat}</span>
+                      As a{' '}
+                      <span className="text-purple-300 font-medium">{upstreamData.story.asA}</span>,
+                      I want{' '}
+                      <span className="text-purple-300 font-medium">
+                        {upstreamData.story.iWant}
+                      </span>{' '}
+                      so that{' '}
+                      <span className="text-purple-300 font-medium">
+                        {upstreamData.story.soThat}
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -251,10 +258,15 @@ export function TraceabilityDrawer({
                 </span>
 
                 {(downstreamData.epics || []).map((epic: any, idx: number) => (
-                  <div key={epic.id} className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+                  <div
+                    key={epic.id}
+                    className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-blue-400 font-bold">EPIC-{idx + 1}</span>
+                        <span className="text-xs font-mono text-blue-400 font-bold">
+                          EPIC-{idx + 1}
+                        </span>
                         <h5 className="text-xs font-bold text-slate-200">{epic.title}</h5>
                       </div>
                       <span className="text-[10px] font-mono text-slate-400">{epic.sizing}</span>
@@ -262,8 +274,13 @@ export function TraceabilityDrawer({
 
                     <div className="pl-3 border-l border-slate-800 space-y-2">
                       {(epic.userStories || []).map((story: any, sIdx: number) => (
-                        <div key={story.id} className="p-2.5 rounded bg-slate-900 text-xs text-slate-300 flex items-center justify-between">
-                          <span className="truncate pr-2">US-{idx + 1}.{sIdx + 1}: {story.title}</span>
+                        <div
+                          key={story.id}
+                          className="p-2.5 rounded bg-slate-900 text-xs text-slate-300 flex items-center justify-between"
+                        >
+                          <span className="truncate pr-2">
+                            US-{idx + 1}.{sIdx + 1}: {story.title}
+                          </span>
                           <Badge className="bg-slate-800 text-[10px] text-slate-400">
                             {story.status}
                           </Badge>
@@ -275,27 +292,32 @@ export function TraceabilityDrawer({
               </div>
 
               {/* Architecture Proposals */}
-              {downstreamData.architectureProposals && downstreamData.architectureProposals.length > 0 && (
-                <div className="space-y-3 pt-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-purple-400 block flex items-center gap-1.5">
-                    <Cpu className="w-3.5 h-3.5" /> Synthesized Architecture Proposals ({downstreamData.architectureProposals.length})
-                  </span>
+              {downstreamData.architectureProposals &&
+                downstreamData.architectureProposals.length > 0 && (
+                  <div className="space-y-3 pt-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-purple-400 block flex items-center gap-1.5">
+                      <Cpu className="w-3.5 h-3.5" /> Synthesized Architecture Proposals (
+                      {downstreamData.architectureProposals.length})
+                    </span>
 
-                  {downstreamData.architectureProposals.map((prop: any) => (
-                    <div key={prop.id} className="p-4 rounded-xl bg-purple-950/20 border border-purple-500/30 space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-purple-200">
-                          Architecture Proposal v{prop.version}: {prop.title}
-                        </span>
-                        <Badge className="bg-purple-500/10 text-purple-300 text-[10px]">
-                          {prop.status}
-                        </Badge>
+                    {downstreamData.architectureProposals.map((prop: any) => (
+                      <div
+                        key={prop.id}
+                        className="p-4 rounded-xl bg-purple-950/20 border border-purple-500/30 space-y-1.5"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-purple-200">
+                            Architecture Proposal v{prop.version}: {prop.title}
+                          </span>
+                          <Badge className="bg-purple-500/10 text-purple-300 text-[10px]">
+                            {prop.status}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-slate-400">{prop.summary}</p>
                       </div>
-                      <p className="text-xs text-slate-400">{prop.summary}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
             </div>
           ) : (
             <div className="text-center py-12 text-slate-500 text-xs">

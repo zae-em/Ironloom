@@ -6,11 +6,7 @@ export const metadata: Metadata = {
   description: 'Collaborating specialized AI agents with human-in-the-loop governance.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>{children}</body>

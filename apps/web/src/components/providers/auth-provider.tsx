@@ -60,9 +60,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // 4. Fetch projects for active org
         try {
-          const projList = await apiClient.get<Project[]>(`/organizations/${validActiveOrgId}/projects`, {
-            orgId: validActiveOrgId,
-          });
+          const projList = await apiClient.get<Project[]>(
+            `/organizations/${validActiveOrgId}/projects`,
+            {
+              orgId: validActiveOrgId,
+            },
+          );
           setProjects(projList);
 
           const storedProjId = localStorage.getItem('ironloom_active_project');
@@ -105,7 +108,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         loadUserData(session.access_token);
       } else if (event === 'SIGNED_OUT') {

@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import { SupabaseAuthGuard } from '../auth/guards/supabase-auth.guard';
 import { OrgMembershipGuard } from '../auth/guards/org-membership.guard';
@@ -32,10 +23,7 @@ export class OrganizationsController {
   }
 
   @Post()
-  async createOrg(
-    @CurrentUser() user: AuthUserContext,
-    @Body() body: CreateOrganizationDto,
-  ) {
+  async createOrg(@CurrentUser() user: AuthUserContext, @Body() body: CreateOrganizationDto) {
     return this.orgsService.createOrganization(user.userId, user.email, body);
   }
 

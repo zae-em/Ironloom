@@ -1,20 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { SupabaseAuthGuard } from '../auth/guards/supabase-auth.guard';
 import { OrgMembershipGuard } from '../auth/guards/org-membership.guard';
 import { CurrentOrg } from '../auth/decorators/current-org.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import {
-  AuthUserContext,
-  StartWorkflowDto,
-  DecideApprovalDto,
-} from '@ironloom/shared';
+import { AuthUserContext, StartWorkflowDto, DecideApprovalDto } from '@ironloom/shared';
 import { OrchestrationService } from './orchestration.service';
 
 @Controller('api/v1')
@@ -50,10 +39,7 @@ export class OrchestrationController {
   }
 
   @Post('workflows/:id/resume')
-  async resumeWorkflow(
-    @Param('id') id: string,
-    @CurrentUser() user: AuthUserContext,
-  ) {
+  async resumeWorkflow(@Param('id') id: string, @CurrentUser() user: AuthUserContext) {
     return this.orchestrationService.resumeWorkflow(id, user.userId);
   }
 

@@ -45,11 +45,7 @@ export class ProjectsService {
     return this.memoryProjects.get(orgId) || [];
   }
 
-  async createProject(
-    orgId: string,
-    actorUserId: string,
-    dto: CreateProjectDto,
-  ): Promise<Project> {
+  async createProject(orgId: string, actorUserId: string, dto: CreateProjectDto): Promise<Project> {
     const projectId = uuidv4();
     const now = new Date().toISOString();
     const admin = this.supabaseService.getAdminClient();

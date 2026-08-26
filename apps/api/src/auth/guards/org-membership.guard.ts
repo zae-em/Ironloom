@@ -1,9 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { AuthUserContext, OrgRole } from '@ironloom/shared';
@@ -20,7 +15,12 @@ export class OrgMembershipGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const user: AuthUserContext = request.user;
-    const targetOrgId = request.headers['x-org-id'] || request.body?.orgId || request.params?.orgId || request.query?.orgId || user?.orgId;
+    const targetOrgId =
+      request.headers['x-org-id'] ||
+      request.body?.orgId ||
+      request.params?.orgId ||
+      request.query?.orgId ||
+      user?.orgId;
 
     if (!user) {
       throw new ForbiddenException('User context is not available');
@@ -33,7 +33,9 @@ export class OrgMembershipGuard implements CanActivate {
     const membership = user.orgMemberships?.find((m) => m.orgId === targetOrgId);
 
     if (!membership) {
-      throw new ForbiddenException(`Access denied: User does not belong to organization ${targetOrgId}`);
+      throw new ForbiddenException(
+        `Access denied: User does not belong to organization ${targetOrgId}`,
+      );
     }
 
     if (requiredRoles && requiredRoles.length > 0) {

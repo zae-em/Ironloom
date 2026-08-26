@@ -7,7 +7,8 @@ dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 async function runReset() {
-  const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:54322/postgres';
+  const dbUrl =
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:54322/postgres';
   console.log(`[DB Reset] Connecting to PostgreSQL...`);
 
   const client = new Client({ connectionString: dbUrl });
@@ -24,7 +25,10 @@ async function runReset() {
     `);
 
     console.log('[DB Reset] Re-applying schema migration...');
-    const migrationPath = path.resolve(__dirname, '../../../../infra/migrations/001_initial_schema.sql');
+    const migrationPath = path.resolve(
+      __dirname,
+      '../../../../infra/migrations/001_initial_schema.sql',
+    );
     const migrationSql = fs.readFileSync(migrationPath, 'utf8');
     await client.query(migrationSql);
 

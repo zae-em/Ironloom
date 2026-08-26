@@ -21,22 +21,28 @@ export const ChatMessageSchema = z.object({
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
-export const AiGatewayRequestSchema = z.object({
-  prompt: z.string().optional(),
-  messages: z.array(ChatMessageSchema).optional(),
-  agentId: z.string().min(1).default('system'),
-  taskType: z.string().min(1).default('general_completion'),
-  preferredProvider: AiProviderNameSchema.optional(),
-  fallbackProviders: z.array(AiProviderNameSchema).optional(),
-  model: z.string().optional(),
-  temperature: z.number().min(0).max(2).optional().default(0.7),
-  maxTokens: z.number().int().positive().optional().default(2048),
-  orgId: z.string().uuid().optional(),
-  projectId: z.string().uuid().optional(),
-  metadata: z.record(z.any()).optional().default({}),
-}).refine((data) => data.prompt !== undefined || (data.messages !== undefined && data.messages.length > 0), {
-  message: 'Either prompt or non-empty messages array must be provided',
-});
+export const AiGatewayRequestSchema = z
+  .object({
+    prompt: z.string().optional(),
+    messages: z.array(ChatMessageSchema).optional(),
+    agentId: z.string().min(1).default('system'),
+    taskType: z.string().min(1).default('general_completion'),
+    preferredProvider: AiProviderNameSchema.optional(),
+    fallbackProviders: z.array(AiProviderNameSchema).optional(),
+    model: z.string().optional(),
+    temperature: z.number().min(0).max(2).optional().default(0.7),
+    maxTokens: z.number().int().positive().optional().default(2048),
+    orgId: z.string().uuid().optional(),
+    projectId: z.string().uuid().optional(),
+    metadata: z.record(z.any()).optional().default({}),
+  })
+  .refine(
+    (data) =>
+      data.prompt !== undefined || (data.messages !== undefined && data.messages.length > 0),
+    {
+      message: 'Either prompt or non-empty messages array must be provided',
+    },
+  );
 
 export type AiGatewayRequest = z.input<typeof AiGatewayRequestSchema>;
 export type AiGatewayRequestParsed = z.output<typeof AiGatewayRequestSchema>;

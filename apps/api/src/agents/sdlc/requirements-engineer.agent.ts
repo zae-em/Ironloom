@@ -47,7 +47,9 @@ export class RequirementsEngineerAgent extends BaseAgent {
     provider: string;
     retrievedContextCount: number;
   }> {
-    this.logger.log(`Formulating user stories and Gherkin criteria for Epic "${params.epic.title}" (${params.epic.id})`);
+    this.logger.log(
+      `Formulating user stories and Gherkin criteria for Epic "${params.epic.title}" (${params.epic.id})`,
+    );
 
     // 1. RAG Retrieval for past user stories and acceptance criteria conventions
     const ragResults = await this.ragService.retrieveContext({
@@ -152,7 +154,8 @@ export class RequirementsEngineerAgent extends BaseAgent {
                 scenarioTitle: 'Valid telemetry payload processing',
                 givenText: 'a raw binary protobuf packet from drone sensor array',
                 whenText: 'the ingestion handler receives the packet',
-                thenText: 'the payload is validated, parsed into schema, and published to stream within 5ms',
+                thenText:
+                  'the payload is validated, parsed into schema, and published to stream within 5ms',
               },
               {
                 scenarioTitle: 'Malformed packet error handling',

@@ -149,7 +149,9 @@ export function TopBar() {
               className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-accent transition-colors"
             >
               <FolderGit2 className="h-3.5 w-3.5 text-indigo-400" />
-              <span className="max-w-[150px] truncate">{activeProject?.name || 'Select Project'}</span>
+              <span className="max-w-[150px] truncate">
+                {activeProject?.name || 'Select Project'}
+              </span>
               <ChevronDown className="h-3 w-3 text-muted-foreground" />
             </button>
 
@@ -162,7 +164,9 @@ export function TopBar() {
                   Projects in {activeOrg?.name}
                 </div>
                 {projects.length === 0 ? (
-                  <div className="px-2.5 py-2 text-xs text-muted-foreground italic">No projects yet</div>
+                  <div className="px-2.5 py-2 text-xs text-muted-foreground italic">
+                    No projects yet
+                  </div>
                 ) : (
                   projects.map((proj) => (
                     <button
@@ -171,7 +175,9 @@ export function TopBar() {
                       className="flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-left hover:bg-accent transition-colors"
                     >
                       <span className="truncate">{proj.name}</span>
-                      {proj.id === activeProject?.id && <Check className="h-3.5 w-3.5 text-primary" />}
+                      {proj.id === activeProject?.id && (
+                        <Check className="h-3.5 w-3.5 text-primary" />
+                      )}
                     </button>
                   ))
                 )}
@@ -213,7 +219,9 @@ export function TopBar() {
       >
         <form onSubmit={handleCreateOrg} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-muted-foreground mb-1 block">Organization Name</label>
+            <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+              Organization Name
+            </label>
             <Input
               placeholder="e.g. Acme Robotics"
               value={newOrgName}
@@ -253,7 +261,9 @@ export function TopBar() {
       >
         <form onSubmit={handleCreateProj} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-muted-foreground mb-1 block">Project Name</label>
+            <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+              Project Name
+            </label>
             <Input
               placeholder="e.g. Real-Time Telemetry Pipeline"
               value={newProjName}
@@ -262,7 +272,9 @@ export function TopBar() {
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-muted-foreground mb-1 block">Description (Optional)</label>
+            <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+              Description (Optional)
+            </label>
             <Input
               placeholder="High-throughput stream processing service"
               value={newProjDesc}

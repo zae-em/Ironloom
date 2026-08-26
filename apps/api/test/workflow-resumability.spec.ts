@@ -52,8 +52,17 @@ describe('Workflow Resumability & State Persistence Integration Tests', () => {
                 fallbackProviders: [],
                 maxRetries: 1,
                 retryDelayMs: 10,
-                ollama: { baseUrl: 'http://localhost:11434', defaultModel: 'llama3.1', timeoutMs: 1000 },
-                groq: { apiKey: 'mock_key', baseUrl: 'https://api.groq.com', defaultModel: 'llama-3.3-70b-versatile', timeoutMs: 1000 },
+                ollama: {
+                  baseUrl: 'http://localhost:11434',
+                  defaultModel: 'llama3.1',
+                  timeoutMs: 1000,
+                },
+                groq: {
+                  apiKey: 'mock_key',
+                  baseUrl: 'https://api.groq.com',
+                  defaultModel: 'llama-3.3-70b-versatile',
+                  timeoutMs: 1000,
+                },
               },
               supabase: { url: 'http://localhost:54321', serviceRoleKey: 'test_key' },
             }),
@@ -95,14 +104,10 @@ describe('Workflow Resumability & State Persistence Integration Tests', () => {
     projectsService = module.get<ProjectsService>(ProjectsService);
     repo = module.get<OrchestrationRepository>(OrchestrationRepository);
 
-    const project = await projectsService.createProject(
-      ORG_ALPHA,
-      ACTOR_ALICE,
-      {
-        name: 'Resumability Verification Project',
-        description: 'Verifies state persistence across process restarts',
-      },
-    );
+    const project = await projectsService.createProject(ORG_ALPHA, ACTOR_ALICE, {
+      name: 'Resumability Verification Project',
+      description: 'Verifies state persistence across process restarts',
+    });
     testProjectId = project.id;
   });
 

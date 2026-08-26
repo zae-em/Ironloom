@@ -65,7 +65,9 @@ export function BusinessCaseView({
   const [goalsText, setGoalsText] = useState((businessCase.goals || []).join('\n'));
   const [usersText, setUsersText] = useState((businessCase.targetUsers || []).join('\n'));
   const [metricsText, setMetricsText] = useState((businessCase.successMetrics || []).join('\n'));
-  const [assumptionsText, setAssumptionsText] = useState((businessCase.assumptions || []).join('\n'));
+  const [assumptionsText, setAssumptionsText] = useState(
+    (businessCase.assumptions || []).join('\n'),
+  );
   const [risksText, setRisksText] = useState((businessCase.risks || []).join('\n'));
 
   const handleSaveEdits = async () => {
@@ -73,11 +75,26 @@ export function BusinessCaseView({
     try {
       const updatedPayload = {
         problemStatement,
-        goals: goalsText.split('\n').map((s) => s.trim()).filter(Boolean),
-        targetUsers: usersText.split('\n').map((s) => s.trim()).filter(Boolean),
-        successMetrics: metricsText.split('\n').map((s) => s.trim()).filter(Boolean),
-        assumptions: assumptionsText.split('\n').map((s) => s.trim()).filter(Boolean),
-        risks: risksText.split('\n').map((s) => s.trim()).filter(Boolean),
+        goals: goalsText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        targetUsers: usersText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        successMetrics: metricsText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        assumptions: assumptionsText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        risks: risksText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
       };
 
       const res = await apiClient.patch<BusinessCase>(
@@ -151,11 +168,7 @@ export function BusinessCaseView({
           </Badge>
         );
       default:
-        return (
-          <Badge className="bg-slate-500/10 text-slate-400 border-slate-500/30">
-            Draft
-          </Badge>
-        );
+        return <Badge className="bg-slate-500/10 text-slate-400 border-slate-500/30">Draft</Badge>;
     }
   };
 

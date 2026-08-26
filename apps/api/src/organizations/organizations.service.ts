@@ -25,7 +25,10 @@ export class OrganizationsService {
 
   // In-memory tenant data structures for testing & offline resilience
   private readonly memoryOrgs = new Map<string, Organization>();
-  private readonly memoryMembers = new Map<string, Array<{ id: string; userId: string; orgId: string; role: OrgRole; user: any }>>();
+  private readonly memoryMembers = new Map<
+    string,
+    Array<{ id: string; userId: string; orgId: string; role: OrgRole; user: any }>
+  >();
   private readonly memoryInvites = new Map<string, OrganizationInvite[]>();
   private readonly memoryProviderSettings = new Map<string, ProviderSettings>();
 
@@ -85,7 +88,11 @@ export class OrganizationsService {
     return userOrgs;
   }
 
-  async createOrganization(userId: string, userEmail: string, dto: CreateOrganizationDto): Promise<Organization> {
+  async createOrganization(
+    userId: string,
+    userEmail: string,
+    dto: CreateOrganizationDto,
+  ): Promise<Organization> {
     const orgId = uuidv4();
     const now = new Date().toISOString();
     const admin = this.supabaseService.getAdminClient();
@@ -151,7 +158,11 @@ export class OrganizationsService {
   async getOrganization(orgId: string): Promise<Organization> {
     const admin = this.supabaseService.getAdminClient();
     try {
-      const { data, error } = await admin.from('organizations').select('*').eq('id', orgId).single();
+      const { data, error } = await admin
+        .from('organizations')
+        .select('*')
+        .eq('id', orgId)
+        .single();
       if (!error && data) return data as Organization;
     } catch {}
 

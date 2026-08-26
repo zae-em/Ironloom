@@ -52,8 +52,17 @@ describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
                 fallbackProviders: [],
                 maxRetries: 1,
                 retryDelayMs: 10,
-                ollama: { baseUrl: 'http://localhost:11434', defaultModel: 'llama3.1', timeoutMs: 1000 },
-                groq: { apiKey: 'mock_key', baseUrl: 'https://api.groq.com', defaultModel: 'llama-3.3-70b-versatile', timeoutMs: 1000 },
+                ollama: {
+                  baseUrl: 'http://localhost:11434',
+                  defaultModel: 'llama3.1',
+                  timeoutMs: 1000,
+                },
+                groq: {
+                  apiKey: 'mock_key',
+                  baseUrl: 'https://api.groq.com',
+                  defaultModel: 'llama-3.3-70b-versatile',
+                  timeoutMs: 1000,
+                },
               },
               supabase: { url: 'http://localhost:54321', serviceRoleKey: 'test_key' },
             }),
@@ -95,14 +104,10 @@ describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
     projectsService = module.get<ProjectsService>(ProjectsService);
     repo = module.get<OrchestrationRepository>(OrchestrationRepository);
 
-    const project = await projectsService.createProject(
-      ORG_ALPHA,
-      ACTOR_ALICE,
-      {
-        name: 'E2E SDLC Swarm Project',
-        description: 'Verifies entire unattended chain with human approval gates',
-      },
-    );
+    const project = await projectsService.createProject(ORG_ALPHA, ACTOR_ALICE, {
+      name: 'E2E SDLC Swarm Project',
+      description: 'Verifies entire unattended chain with human approval gates',
+    });
     testProjectId = project.id;
   });
 
@@ -114,7 +119,8 @@ describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
       actorUserId: ACTOR_ALICE,
       dto: {
         name: 'Autonomous Swarm Navigation Workflow',
-        rawIdea: 'Build a high-reliability drone collision avoidance system that alerts operators in under 100ms.',
+        rawIdea:
+          'Build a high-reliability drone collision avoidance system that alerts operators in under 100ms.',
       },
     });
 

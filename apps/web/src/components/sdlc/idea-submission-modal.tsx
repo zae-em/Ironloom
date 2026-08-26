@@ -12,7 +12,13 @@ import {
   Clock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { apiClient } from '@/lib/api-client';
 import { toast } from 'sonner';
 
@@ -78,10 +84,7 @@ export function IdeaSubmissionModal({
 
     setIsSubmitting(true);
     try {
-      const response = await apiClient.post<any>(
-        `/projects/${projectId}/sdlc/idea`,
-        { rawIdea },
-      );
+      const response = await apiClient.post<any>(`/projects/${projectId}/sdlc/idea`, { rawIdea });
 
       toast.success('Business Analyst Agent generated structured business case!');
       setRawIdea('');
@@ -116,7 +119,8 @@ export function IdeaSubmissionModal({
             Submit Software Idea for {projectName}
           </DialogTitle>
           <DialogDescription className="text-sm text-slate-400 mt-1">
-            Provide a raw, unstructured idea or requirements narrative. The Business Analyst Agent will perform RAG context retrieval and structure it into a formal Business Case.
+            Provide a raw, unstructured idea or requirements narrative. The Business Analyst Agent
+            will perform RAG context retrieval and structure it into a formal Business Case.
           </DialogDescription>
         </div>
 
@@ -129,8 +133,12 @@ export function IdeaSubmissionModal({
                   <Sparkles className="w-4 h-4 text-indigo-400 absolute inset-0 m-auto" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-white">Business Analyst Agent is Analyzing Idea</h4>
-                  <p className="text-xs text-slate-400">Querying semantic vectors & structuring problem space</p>
+                  <h4 className="text-sm font-semibold text-white">
+                    Business Analyst Agent is Analyzing Idea
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    Querying semantic vectors & structuring problem space
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-mono text-indigo-300">
@@ -153,8 +161,8 @@ export function IdeaSubmissionModal({
                       isCurrent
                         ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
                         : isDone
-                        ? 'bg-slate-800/40 border-slate-800 text-slate-300'
-                        : 'bg-slate-900/30 border-transparent text-slate-600'
+                          ? 'bg-slate-800/40 border-slate-800 text-slate-300'
+                          : 'bg-slate-900/30 border-transparent text-slate-600'
                     }`}
                   >
                     <div
@@ -162,13 +170,15 @@ export function IdeaSubmissionModal({
                         isDone
                           ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                           : isCurrent
-                          ? 'bg-indigo-500 text-white animate-pulse'
-                          : 'bg-slate-800 text-slate-600'
+                            ? 'bg-indigo-500 text-white animate-pulse'
+                            : 'bg-slate-800 text-slate-600'
                       }`}
                     >
                       {isDone ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
                     </div>
-                    <StepIcon className={`w-4 h-4 ${isCurrent ? 'text-indigo-400' : isDone ? 'text-emerald-400' : 'text-slate-600'}`} />
+                    <StepIcon
+                      className={`w-4 h-4 ${isCurrent ? 'text-indigo-400' : isDone ? 'text-emerald-400' : 'text-slate-600'}`}
+                    />
                     <span className="text-xs font-medium">{step.label}</span>
                     {isCurrent && (
                       <Loader2 className="w-3.5 h-3.5 ml-auto text-indigo-400 animate-spin" />

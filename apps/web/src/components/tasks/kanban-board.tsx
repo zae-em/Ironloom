@@ -17,7 +17,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 export type TaskStatus = 'backlog' | 'in_progress' | 'in_review' | 'done';
@@ -39,10 +45,30 @@ interface KanbanBoardProps {
 }
 
 const COLUMNS: Array<{ id: TaskStatus; label: string; color: string; badgeColor: string }> = [
-  { id: 'backlog', label: 'Backlog', color: 'border-slate-800', badgeColor: 'bg-slate-800 text-slate-300' },
-  { id: 'in_progress', label: 'In Progress', color: 'border-blue-900/40', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/30' },
-  { id: 'in_review', label: 'Review / QA', color: 'border-amber-900/40', badgeColor: 'bg-amber-500/10 text-amber-400 border border-amber-500/30' },
-  { id: 'done', label: 'Done', color: 'border-emerald-900/40', badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' },
+  {
+    id: 'backlog',
+    label: 'Backlog',
+    color: 'border-slate-800',
+    badgeColor: 'bg-slate-800 text-slate-300',
+  },
+  {
+    id: 'in_progress',
+    label: 'In Progress',
+    color: 'border-blue-900/40',
+    badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/30',
+  },
+  {
+    id: 'in_review',
+    label: 'Review / QA',
+    color: 'border-amber-900/40',
+    badgeColor: 'bg-amber-500/10 text-amber-400 border border-amber-500/30',
+  },
+  {
+    id: 'done',
+    label: 'Done',
+    color: 'border-emerald-900/40',
+    badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
+  },
 ];
 
 export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps) {
@@ -62,7 +88,8 @@ export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps)
           {
             id: 'task-2',
             title: 'Telemetry websocket ingestion gateway service',
-            description: 'Setup streaming Redis pub/sub queue for incoming drone telemetry packets.',
+            description:
+              'Setup streaming Redis pub/sub queue for incoming drone telemetry packets.',
             status: 'backlog',
             priority: 'high',
             sizing: 'L',
@@ -96,9 +123,7 @@ export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps)
   const [newStatus, setNewStatus] = useState<TaskStatus>('backlog');
 
   const moveTask = (taskId: string, targetStatus: TaskStatus) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, status: targetStatus } : t)),
-    );
+    setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: targetStatus } : t)));
     if (onTaskMove) onTaskMove(taskId, targetStatus);
     toast.success(`Task moved to ${targetStatus.replace('_', ' ')}`);
   };
@@ -127,13 +152,29 @@ export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps)
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'critical':
-        return <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">Critical</span>;
+        return (
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            Critical
+          </span>
+        );
       case 'high':
-        return <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">High</span>;
+        return (
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            High
+          </span>
+        );
       case 'medium':
-        return <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Medium</span>;
+        return (
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+            Medium
+          </span>
+        );
       default:
-        return <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Low</span>;
+        return (
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
+            Low
+          </span>
+        );
     }
   };
 
@@ -142,7 +183,9 @@ export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps)
       {/* Board Header Actions */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-white tracking-tight">SDLC Operational Task Board</h2>
+          <h2 className="text-lg font-bold text-white tracking-tight">
+            SDLC Operational Task Board
+          </h2>
           <p className="text-xs text-slate-400">
             Sprint backlog automatically populated from approved user stories
           </p>
@@ -172,7 +215,9 @@ export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps)
                 <span className="text-xs font-bold text-slate-200 uppercase tracking-wider">
                   {column.label}
                 </span>
-                <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full ${column.badgeColor}`}>
+                <span
+                  className={`text-[11px] font-mono px-2 py-0.5 rounded-full ${column.badgeColor}`}
+                >
                   {colTasks.length}
                 </span>
               </div>
@@ -211,7 +256,9 @@ export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps)
                       <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400">
                         <div className="flex items-center gap-1.5">
                           <User className="w-3 h-3 text-slate-500" />
-                          <span className="truncate max-w-[100px]">{task.assignee || 'Unassigned'}</span>
+                          <span className="truncate max-w-[100px]">
+                            {task.assignee || 'Unassigned'}
+                          </span>
                         </div>
 
                         {/* Quick Move Arrows */}
@@ -235,7 +282,8 @@ export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps)
                               type="button"
                               onClick={() => {
                                 const idx = COLUMNS.findIndex((c) => c.id === column.id);
-                                if (idx < COLUMNS.length - 1) moveTask(task.id, COLUMNS[idx + 1].id);
+                                if (idx < COLUMNS.length - 1)
+                                  moveTask(task.id, COLUMNS[idx + 1].id);
                               }}
                               title="Move right"
                               className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300"
@@ -258,9 +306,7 @@ export function KanbanBoard({ initialTasks = [], onTaskMove }: KanbanBoardProps)
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
         <DialogContent className="sm:max-w-md bg-slate-900 border-slate-800 text-slate-100">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-white">
-              Create SDLC Task
-            </DialogTitle>
+            <DialogTitle className="text-base font-bold text-white">Create SDLC Task</DialogTitle>
             <DialogDescription className="text-xs text-slate-400">
               Add a manual engineering task or override to the sprint board.
             </DialogDescription>

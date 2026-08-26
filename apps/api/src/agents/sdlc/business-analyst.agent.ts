@@ -93,7 +93,8 @@ export class BusinessAnalystAgent extends BaseAgent {
   }
 
   async execute(input: AgentTaskInput): Promise<AgentTaskOutput> {
-    const rawIdea = input.userPrompt || input.parameters?.rawIdea || 'Build a scalable cloud system.';
+    const rawIdea =
+      input.userPrompt || input.parameters?.rawIdea || 'Build a scalable cloud system.';
     const projectName = input.context?.projectName || 'Project Workspace';
 
     const result = await this.analyzeIdea({

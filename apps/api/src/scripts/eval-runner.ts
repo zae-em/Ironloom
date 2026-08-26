@@ -4,12 +4,7 @@ process.env.GROQ_API_KEY = 'mock_key';
 import * as fs from 'fs';
 import * as path from 'path';
 import { AgentEvalService, EvalFixture, EvalScorecard } from '../eval/agent-eval.service';
-import {
-  BusinessCase,
-  Epic,
-  UserStory,
-  ArchitectureProposal,
-} from '@ironloom/shared';
+import { BusinessCase, Epic, UserStory, ArchitectureProposal } from '@ironloom/shared';
 
 async function runEvaluationSuite() {
   console.log('\n' + '='.repeat(80));
@@ -29,7 +24,7 @@ async function runEvaluationSuite() {
   const fixtures: EvalFixture[] = JSON.parse(raw);
 
   const scorecards: EvalScorecard[] = [];
-  const PASS_THRESHOLD = 0.80;
+  const PASS_THRESHOLD = 0.8;
 
   for (const fixture of fixtures) {
     console.log(`▶ Evaluating Fixture [${fixture.id}] (${fixture.domain})...`);
@@ -41,9 +36,17 @@ async function runEvaluationSuite() {
       projectId: '11111111-1111-1111-1111-111111111111',
       rawIdea: fixture.rawIdea,
       problemStatement: `Autonomous low-latency telemetry streaming system for drone swarms with obstacle avoidance math under 100ms.`,
-      goals: ['Achieve sub-100ms collision alerts', 'Support 50+ concurrent drones', 'Zero packet loss telemetry ingestion'],
+      goals: [
+        'Achieve sub-100ms collision alerts',
+        'Support 50+ concurrent drones',
+        'Zero packet loss telemetry ingestion',
+      ],
       targetUsers: ['Drone Fleet Operators', 'SRE Operations Engineers'],
-      successMetrics: ['Alert latency < 100ms', 'Swarm collision rate 0.00%', '99.99% gateway uptime'],
+      successMetrics: [
+        'Alert latency < 100ms',
+        'Swarm collision rate 0.00%',
+        '99.99% gateway uptime',
+      ],
       assumptions: ['Reliable 5G/Mesh network link available'],
       risks: ['High packet jitter during bad weather'],
       version: 1,
@@ -59,7 +62,8 @@ async function runEvaluationSuite() {
         projectId: '11111111-1111-1111-1111-111111111111',
         businessCaseId: mockBusinessCase.id,
         title: 'Real-Time Telemetry Ingestion Gateway',
-        description: 'High-throughput UDP/Websocket streaming ingestion pipeline with Redis buffer queue.',
+        description:
+          'High-throughput UDP/Websocket streaming ingestion pipeline with Redis buffer queue.',
         priority: 'high',
         sizing: 'L',
         rationale: 'Core pipeline required for receiving drone positional vectors.',
@@ -73,7 +77,8 @@ async function runEvaluationSuite() {
         projectId: '11111111-1111-1111-1111-111111111111',
         businessCaseId: mockBusinessCase.id,
         title: 'Collision Prediction Vector Math Engine',
-        description: 'Computes proximity and trajectory intersection in under 20ms using spatial indexing.',
+        description:
+          'Computes proximity and trajectory intersection in under 20ms using spatial indexing.',
         priority: 'critical',
         sizing: 'M',
         rationale: 'Critical mathematical component to calculate evasion vectors.',
@@ -138,16 +143,40 @@ async function runEvaluationSuite() {
       projectId: '11111111-1111-1111-1111-111111111111',
       version: 1,
       title: 'Low-Latency Drone Swarm Event-Driven Architecture',
-      summary: 'Microservices architecture with Redis streaming pub/sub and spatial vector math engine.',
+      summary:
+        'Microservices architecture with Redis streaming pub/sub and spatial vector math engine.',
       components: [
-        { name: 'Telemetry Gateway', description: 'Websocket & UDP receiver', techChoice: 'Node.js / Fastify', justification: 'Non-blocking I/O event loop' },
-        { name: 'Collision Engine', description: 'Spatial intersection math', techChoice: 'Rust / WebAssembly', justification: 'Zero garbage collection pauses' },
-        { name: 'Operator UI', description: 'Real-time telemetry map', techChoice: 'Next.js 14 & Canvas', justification: 'Smooth 60fps rendering' },
+        {
+          name: 'Telemetry Gateway',
+          description: 'Websocket & UDP receiver',
+          techChoice: 'Node.js / Fastify',
+          justification: 'Non-blocking I/O event loop',
+        },
+        {
+          name: 'Collision Engine',
+          description: 'Spatial intersection math',
+          techChoice: 'Rust / WebAssembly',
+          justification: 'Zero garbage collection pauses',
+        },
+        {
+          name: 'Operator UI',
+          description: 'Real-time telemetry map',
+          techChoice: 'Next.js 14 & Canvas',
+          justification: 'Smooth 60fps rendering',
+        },
       ],
       techStack: [
         { category: 'Runtime', technology: 'Node.js', justification: 'API backend' },
-        { category: 'Message Queue', technology: 'Redis Streams', justification: 'In-flight buffer' },
-        { category: 'Database', technology: 'PostgreSQL / TimescaleDB', justification: 'Time-series spatial persistence' },
+        {
+          category: 'Message Queue',
+          technology: 'Redis Streams',
+          justification: 'In-flight buffer',
+        },
+        {
+          category: 'Database',
+          technology: 'PostgreSQL / TimescaleDB',
+          justification: 'Time-series spatial persistence',
+        },
       ],
       dataModel: {
         entities: [
@@ -197,10 +226,11 @@ async function runEvaluationSuite() {
     })),
   );
 
-  const averageScore =
-    scorecards.reduce((acc, s) => acc + s.overallScore, 0) / scorecards.length;
+  const averageScore = scorecards.reduce((acc, s) => acc + s.overallScore, 0) / scorecards.length;
 
-  console.log(`\nAggregate Quality Score: ${(averageScore * 100).toFixed(1)}% (Pass Threshold: ${(PASS_THRESHOLD * 100).toFixed(0)}%)`);
+  console.log(
+    `\nAggregate Quality Score: ${(averageScore * 100).toFixed(1)}% (Pass Threshold: ${(PASS_THRESHOLD * 100).toFixed(0)}%)`,
+  );
 
   if (averageScore >= PASS_THRESHOLD && scorecards.every((s) => s.passed)) {
     console.log('✅ ALL AGENT EVALUATION QUALITY GATES PASSED!\n');

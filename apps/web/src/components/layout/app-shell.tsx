@@ -57,12 +57,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <h1 className="text-xl font-bold tracking-tight text-foreground">Welcome to IRONLOOM</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            To start collaborating with autonomous AI engineering agents, create your primary organization workspace.
+            To start collaborating with autonomous AI engineering agents, create your primary
+            organization workspace.
           </p>
 
           <form onSubmit={handleInitialOrgCreate} className="mt-6 space-y-4">
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">Organization Name</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Organization Name
+              </label>
               <Input
                 placeholder="e.g. Acme Software Labs"
                 value={orgName}
@@ -74,7 +77,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">Workspace Slug</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Workspace Slug
+              </label>
               <Input
                 placeholder="e.g. acme-software-labs"
                 value={orgSlug}

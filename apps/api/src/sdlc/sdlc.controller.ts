@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { SdlcService } from './sdlc.service';
 import { SupabaseAuthGuard } from '../auth/guards/supabase-auth.guard';
 import { OrgMembershipGuard } from '../auth/guards/org-membership.guard';
@@ -166,28 +158,19 @@ export class SdlcController {
 
   @Patch('sdlc/business-cases/:id')
   @UseGuards(OrgMembershipGuard)
-  async updateBusinessCase(
-    @Param('id') id: string,
-    @Body() body: Partial<BusinessCase>,
-  ) {
+  async updateBusinessCase(@Param('id') id: string, @Body() body: Partial<BusinessCase>) {
     return this.sdlcService.updateBusinessCase(id, body);
   }
 
   @Patch('sdlc/epics/:id')
   @UseGuards(OrgMembershipGuard)
-  async updateEpic(
-    @Param('id') id: string,
-    @Body() body: Partial<Epic>,
-  ) {
+  async updateEpic(@Param('id') id: string, @Body() body: Partial<Epic>) {
     return this.sdlcService.updateEpic(id, body);
   }
 
   @Patch('sdlc/user-stories/:id')
   @UseGuards(OrgMembershipGuard)
-  async updateUserStory(
-    @Param('id') id: string,
-    @Body() body: Partial<UserStory>,
-  ) {
+  async updateUserStory(@Param('id') id: string, @Body() body: Partial<UserStory>) {
     return this.sdlcService.updateUserStory(id, body);
   }
 

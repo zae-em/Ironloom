@@ -54,21 +54,25 @@ Built strictly with **zero-licensing-cost, free/open-source and free-tier tools*
 ## ⚡ Key Features (Phases 1–3)
 
 ### 1. Specialized SDLC Collaborating Agents (`apps/api/src/agents/sdlc`)
+
 - **Business Analyst (BA)**: Ingests unstructured idea text and generates structured, field-by-field `BusinessCase` entities (`problemStatement`, `goals`, `targetUsers`, `successMetrics`, `assumptions`, `risks`).
 - **Product Manager (PM)**: Decomposes business cases into prioritized Epics with rationale and T-shirt sizing (`XS`–`XL`).
 - **Requirements Engineer**: Formulates user stories ("As a... I want... So that...") with structured Gherkin-style testable Acceptance Criteria (Given/When/Then).
 - **System Architect**: Synthesizes approved requirements into versioned Architecture Proposals (`v1`, `v2`...) with modular components, tech stack justifications, entity relationships, and Mermaid diagram specs (`graph TD`).
 
 ### 2. Zero-Cost pgvector RAG Knowledge Pipeline (`apps/api/src/rag`)
+
 - Embeds documents with local Ollama (`nomic-embed-text`, 768 dimensions, $0.00 / token).
 - Automatically ingests approved business cases, user stories, and architecture proposals.
 - Queries prior context scoped strictly to the active tenant (`org_id`) and project (`project_id`).
 
 ### 3. Bi-Directional Traceability Graph (`apps/api/src/sdlc`)
+
 - **Upstream Traceability**: Query any user story to traverse upstream: `Story → Epic → Business Case → Project → Raw Idea`.
 - **Downstream Traceability**: Query any business case to traverse downstream: `Business Case → Epics → Stories → Acceptance Criteria → Architecture Proposals`.
 
 ### 4. Human-in-the-Loop Review Statuses & PostgreSQL RLS
+
 - Review workflow on all tables: `draft` → `in_review` → `approved` → `rejected`.
 - Database-level isolation enforced via `is_org_member(org_id)` Row-Level Security policies.
 
@@ -93,7 +97,7 @@ pnpm build
 
 - [x] **Prompt 1: Backend Foundation & AI Gateway**
 - [x] **Prompt 2: Frontend Foundation & CI Pipeline**
-- [x] **Prompt 3: Problem Definition & Core SDLC Agent Backend** *(Completed)*
+- [x] **Prompt 3: Problem Definition & Core SDLC Agent Backend** _(Completed)_
 - [ ] **Prompt 4: Product Requirements & PM Agent (Interactive Frontend UI)**
 - [ ] **Prompt 5: System Architecture & Architect Agent (ADR & Schema Visualizer)**
 - [ ] **Prompt 6: Task Breakdown & Estimation Engine**

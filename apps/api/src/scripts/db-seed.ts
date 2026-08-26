@@ -7,7 +7,8 @@ dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 async function runSeed() {
-  const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:54322/postgres';
+  const dbUrl =
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:54322/postgres';
   console.log(`[DB Seed] Connecting to PostgreSQL...`);
 
   const client = new Client({ connectionString: dbUrl });
@@ -23,7 +24,9 @@ async function runSeed() {
     console.log('[DB Seed] Executing 002_seed.sql...');
     await client.query(sql);
 
-    console.log('[DB Seed] Database seeded successfully with test organizations, users, and initial audit logs.');
+    console.log(
+      '[DB Seed] Database seeded successfully with test organizations, users, and initial audit logs.',
+    );
   } catch (error: any) {
     console.error('[DB Seed] Seeding failed:', error.message);
     process.exit(1);

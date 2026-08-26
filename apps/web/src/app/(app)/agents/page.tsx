@@ -28,7 +28,8 @@ const DEFAULT_AGENTS: AgentConfig[] = [
     id: 'business-analyst',
     name: 'Business Analyst Agent',
     role: 'Domain Analyst',
-    description: 'Synthesizes unstructured ideas into structured business cases with goals and metrics.',
+    description:
+      'Synthesizes unstructured ideas into structured business cases with goals and metrics.',
     preferredProvider: 'ollama',
     model: 'llama3.1',
     temperature: 0.6,
@@ -39,7 +40,8 @@ const DEFAULT_AGENTS: AgentConfig[] = [
     id: 'product-manager',
     name: 'Product Manager Agent',
     role: 'Product Strategist',
-    description: 'Decomposes business cases into prioritized Epics with rationale and T-shirt sizing.',
+    description:
+      'Decomposes business cases into prioritized Epics with rationale and T-shirt sizing.',
     preferredProvider: 'ollama',
     model: 'llama3.1',
     temperature: 0.7,
@@ -50,7 +52,8 @@ const DEFAULT_AGENTS: AgentConfig[] = [
     id: 'requirements-engineer',
     name: 'Requirements Engineer Agent',
     role: 'Specification Author',
-    description: 'Formulates user stories with testable Gherkin acceptance criteria (Given/When/Then).',
+    description:
+      'Formulates user stories with testable Gherkin acceptance criteria (Given/When/Then).',
     preferredProvider: 'groq',
     model: 'llama-3.3-70b-versatile',
     temperature: 0.5,
@@ -61,7 +64,8 @@ const DEFAULT_AGENTS: AgentConfig[] = [
     id: 'system-architect',
     name: 'System Architect Agent',
     role: 'Chief Architect',
-    description: 'Synthesizes versioned system architecture proposals, data models, and Mermaid diagrams.',
+    description:
+      'Synthesizes versioned system architecture proposals, data models, and Mermaid diagrams.',
     preferredProvider: 'groq',
     model: 'llama-3.3-70b-versatile',
     temperature: 0.4,
@@ -83,7 +87,8 @@ const DEFAULT_AGENTS: AgentConfig[] = [
     id: 'code-reviewer',
     name: 'Code Reviewer Agent',
     role: 'Security & Quality Auditor',
-    description: 'Analyzes pull requests for AST safety, OWASP vulnerabilities, and design principles.',
+    description:
+      'Analyzes pull requests for AST safety, OWASP vulnerabilities, and design principles.',
     preferredProvider: 'groq',
     model: 'llama-3.3-70b-versatile',
     temperature: 0.2,
@@ -105,7 +110,8 @@ const DEFAULT_AGENTS: AgentConfig[] = [
     id: 'devops-engineer',
     name: 'DevOps & SRE Agent',
     role: 'Infrastructure & Deployment',
-    description: 'Configures Docker containers, GitHub CI/CD workflows, and environment orchestration.',
+    description:
+      'Configures Docker containers, GitHub CI/CD workflows, and environment orchestration.',
     preferredProvider: 'ollama',
     model: 'llama3.1',
     temperature: 0.3,
@@ -128,9 +134,9 @@ export default function AgentsPage() {
       const projects = await apiClient.get<any[]>('/projects').catch(() => []);
       const activeProjId = projects[0]?.id || '00000000-0000-0000-0000-000000000001';
 
-      const logs = await apiClient.get<AuditLogItem[]>(
-        `/projects/${activeProjId}/sdlc/audit-logs`,
-      ).catch(() => []);
+      const logs = await apiClient
+        .get<AuditLogItem[]>(`/projects/${activeProjId}/sdlc/audit-logs`)
+        .catch(() => []);
 
       setAuditLogs(logs);
     } catch {
@@ -181,7 +187,8 @@ export default function AgentsPage() {
             </Badge>
           </div>
           <p className="mt-1 text-xs text-slate-400">
-            Configure per-agent LLM providers to reserve high-quality hosted models for architecture while running local Ollama for zero-cost analysis.
+            Configure per-agent LLM providers to reserve high-quality hosted models for architecture
+            while running local Ollama for zero-cost analysis.
           </p>
         </div>
 

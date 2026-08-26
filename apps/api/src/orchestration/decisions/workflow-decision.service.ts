@@ -120,7 +120,9 @@ export class WorkflowDecisionService {
     return scored.slice(0, topK);
   }
 
-  formatDecisionsForPrompt(results: Array<{ decision: WorkflowDecision; similarity: number }>): string {
+  formatDecisionsForPrompt(
+    results: Array<{ decision: WorkflowDecision; similarity: number }>,
+  ): string {
     if (results.length === 0) return 'No prior workflow decisions recorded.';
     return results
       .map(

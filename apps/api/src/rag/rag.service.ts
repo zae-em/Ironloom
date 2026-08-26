@@ -135,14 +135,7 @@ export class RAGService {
     topK?: number;
     minSimilarity?: number;
   }): Promise<RAGSearchResult[]> {
-    const {
-      orgId,
-      projectId,
-      query,
-      documentTypes,
-      topK = 3,
-      minSimilarity = 0.15,
-    } = params;
+    const { orgId, projectId, query, documentTypes, topK = 3, minSimilarity = 0.15 } = params;
 
     if (!query || query.trim().length === 0) return [];
 

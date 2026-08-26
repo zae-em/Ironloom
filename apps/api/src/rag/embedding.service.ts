@@ -23,11 +23,17 @@ export class EmbeddingService {
       return this.generateDeterministicVector(text, this.vectorDimension);
     }
 
-    const baseUrl = this.configService.get<string>('aiGateway.ollama.baseUrl', 'http://localhost:11434');
+    const baseUrl = this.configService.get<string>(
+      'aiGateway.ollama.baseUrl',
+      'http://localhost:11434',
+    );
     const now = Date.now();
 
     // If Ollama was recently verified offline, skip network roundtrip
-    if (this.isOllamaOnline === false && now - this.lastHealthCheckTime < this.healthCheckIntervalMs) {
+    if (
+      this.isOllamaOnline === false &&
+      now - this.lastHealthCheckTime < this.healthCheckIntervalMs
+    ) {
       return this.generateDeterministicVector(text, this.vectorDimension);
     }
 
@@ -77,7 +83,11 @@ export class EmbeddingService {
 
   private generateDeterministicVector(text: string, dimensions: number): number[] {
     const vector = new Array(dimensions).fill(0);
-    const words = text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+    const words = text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter(Boolean);
 
     if (words.length === 0) {
       vector[0] = 1.0;

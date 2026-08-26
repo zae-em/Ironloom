@@ -68,9 +68,14 @@ describe('Database Row-Level Security (RLS) Policy Enforcement', () => {
       return auditLogs.filter((a) => isOrgMember(userId, a.orgId));
     }
 
-    function insertProjectAsUser(userId: string, project: { id: string; orgId: string; name: string }) {
+    function insertProjectAsUser(
+      userId: string,
+      project: { id: string; orgId: string; name: string },
+    ) {
       if (!isOrgMember(userId, project.orgId)) {
-        throw new Error(`RLS Policy Violation: User ${userId} is not a member of organization ${project.orgId}`);
+        throw new Error(
+          `RLS Policy Violation: User ${userId} is not a member of organization ${project.orgId}`,
+        );
       }
       projects.push(project);
       return project;
@@ -110,7 +115,10 @@ describe('Database Row-Level Security (RLS) Policy Enforcement', () => {
   });
 
   it('should verify migration SQL syntax contains valid RLS policies and table structures', () => {
-    const migrationPath = path.resolve(__dirname, '../../../infra/migrations/001_initial_schema.sql');
+    const migrationPath = path.resolve(
+      __dirname,
+      '../../../infra/migrations/001_initial_schema.sql',
+    );
     const sql = fs.readFileSync(migrationPath, 'utf8');
 
     expect(sql).toContain('ENABLE ROW LEVEL SECURITY');

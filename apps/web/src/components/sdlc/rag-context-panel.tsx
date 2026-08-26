@@ -35,7 +35,9 @@ export function RAGContextPanel({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className={`rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden ${className}`}>
+    <div
+      className={`rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden ${className}`}
+    >
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -55,14 +57,19 @@ export function RAGContextPanel({
         </div>
         <div className="flex items-center gap-1.5 text-xs text-slate-400">
           <span>{isExpanded ? 'Hide context' : 'Inspect sources'}</span>
-          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          {isExpanded ? (
+            <ChevronUp className="w-3.5 h-3.5" />
+          ) : (
+            <ChevronDown className="w-3.5 h-3.5" />
+          )}
         </div>
       </button>
 
       {isExpanded && (
         <div className="p-4 border-t border-slate-800/80 bg-slate-950/40 space-y-2.5 text-xs">
           <p className="text-slate-400 text-[11px]">
-            The agent retrieved the following past approved knowledge artifacts via cosine similarity search prior to generation:
+            The agent retrieved the following past approved knowledge artifacts via cosine
+            similarity search prior to generation:
           </p>
 
           <div className="space-y-2">

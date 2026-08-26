@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { AiGatewayRequest, AiProviderName, TokenUsage } from '@ironloom/shared';
-import { IProviderAdapter, ProviderCompletionResult } from '../interfaces/provider-adapter.interface';
+import {
+  IProviderAdapter,
+  ProviderCompletionResult,
+} from '../interfaces/provider-adapter.interface';
 import { CostCalculatorService } from '../cost/cost-calculator.service';
 
 @Injectable()
@@ -21,7 +24,10 @@ export class MockAdapter implements IProviderAdapter {
     this.simulatedLatencyMs = ms;
   }
 
-  async complete(request: AiGatewayRequest, overrideModel?: string): Promise<ProviderCompletionResult> {
+  async complete(
+    request: AiGatewayRequest,
+    overrideModel?: string,
+  ): Promise<ProviderCompletionResult> {
     if (this.shouldFail) {
       throw new Error(`[MockAdapter] ${this.failureError}`);
     }

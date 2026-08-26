@@ -4,7 +4,14 @@ import * as React from 'react';
 import { getSupabase } from '../../../lib/supabase';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 import { toast } from 'sonner';
 import { KeyRound, ArrowLeft } from 'lucide-react';
 
@@ -54,7 +61,10 @@ export default function ForgotPasswordPage() {
             <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-4 text-sm text-emerald-400">
               Check your inbox for <strong>{email}</strong>. We&apos;ve sent a secure reset link.
             </div>
-            <a href="/login" className="inline-flex items-center text-xs text-primary hover:underline pt-2">
+            <a
+              href="/login"
+              className="inline-flex items-center text-xs text-primary hover:underline pt-2"
+            >
               <ArrowLeft className="mr-1 h-3.5 w-3.5" /> Back to Sign In
             </a>
           </CardContent>
@@ -62,7 +72,9 @@ export default function ForgotPasswordPage() {
           <form onSubmit={handleResetRequest}>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-muted-foreground mb-1 block">Account Email</label>
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                  Account Email
+                </label>
                 <Input
                   type="email"
                   placeholder="name@company.com"
@@ -77,7 +89,10 @@ export default function ForgotPasswordPage() {
               <Button type="submit" className="w-full font-semibold" isLoading={isLoading}>
                 Send Recovery Instructions
               </Button>
-              <a href="/login" className="inline-flex items-center justify-center text-xs text-muted-foreground hover:text-foreground">
+              <a
+                href="/login"
+                className="inline-flex items-center justify-center text-xs text-muted-foreground hover:text-foreground"
+              >
                 <ArrowLeft className="mr-1 h-3.5 w-3.5" /> Back to Sign In
               </a>
             </CardFooter>

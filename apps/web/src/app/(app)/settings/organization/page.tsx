@@ -2,7 +2,13 @@
 
 import * as React from 'react';
 import { useAuth } from '../../../../components/providers/auth-provider';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../../components/ui/card';
 import { Button } from '../../../../components/ui/button';
 import { Badge } from '../../../../components/ui/badge';
 import { Input } from '../../../../components/ui/input';
@@ -27,16 +33,20 @@ export default function OrganizationSettingsPage() {
   const [hasCopied, setHasCopied] = React.useState(false);
 
   // 1. Fetch Members Query
-  const { data: members = [], isLoading: isMembersLoading } = useQuery<OrganizationMemberWithUser[]>({
+  const { data: members = [], isLoading: isMembersLoading } = useQuery<
+    OrganizationMemberWithUser[]
+  >({
     queryKey: ['org-members', activeOrg?.id],
-    queryFn: () => apiClient.get(`/organizations/${activeOrg?.id}/members`, { orgId: activeOrg?.id }),
+    queryFn: () =>
+      apiClient.get(`/organizations/${activeOrg?.id}/members`, { orgId: activeOrg?.id }),
     enabled: Boolean(activeOrg?.id),
   });
 
   // 2. Fetch Invites Query (Admin only)
   const { data: invites = [] } = useQuery<OrganizationInvite[]>({
     queryKey: ['org-invites', activeOrg?.id],
-    queryFn: () => apiClient.get(`/organizations/${activeOrg?.id}/invites`, { orgId: activeOrg?.id }),
+    queryFn: () =>
+      apiClient.get(`/organizations/${activeOrg?.id}/invites`, { orgId: activeOrg?.id }),
     enabled: Boolean(activeOrg?.id && isOwnerOrAdmin),
   });
 
@@ -60,9 +70,13 @@ export default function OrganizationSettingsPage() {
   // 4. Update Role Mutation
   const updateRoleMutation = useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: OrgRole }) =>
-      apiClient.patch(`/organizations/${activeOrg?.id}/members/${userId}`, { role }, {
-        orgId: activeOrg?.id,
-      }),
+      apiClient.patch(
+        `/organizations/${activeOrg?.id}/members/${userId}`,
+        { role },
+        {
+          orgId: activeOrg?.id,
+        },
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['org-members', activeOrg?.id] });
       toast.success('Member role updated');
@@ -107,7 +121,9 @@ export default function OrganizationSettingsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Team & Workspace Members</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Team & Workspace Members
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Manage organization members and role permissions for <strong>{activeOrg?.name}</strong>.
           </p>
@@ -161,9 +177,15 @@ export default function OrganizationSettingsPage() {
                             <div>
                               <span className="font-medium text-foreground block">
                                 {member.user?.name || member.user?.email?.split('@')[0]}
-                                {isSelf && <span className="ml-1 text-[10px] text-muted-foreground">(You)</span>}
+                                {isSelf && (
+                                  <span className="ml-1 text-[10px] text-muted-foreground">
+                                    (You)
+                                  </span>
+                                )}
                               </span>
-                              <span className="text-[11px] text-muted-foreground">{member.user?.email}</span>
+                              <span className="text-[11px] text-muted-foreground">
+                                {member.user?.email}
+                              </span>
                             </div>
                           </div>
                         </td>
@@ -246,7 +268,8 @@ export default function OrganizationSettingsPage() {
             <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-4 text-xs text-emerald-400">
               <p className="font-semibold mb-1">Invitation Record Created!</p>
               <p className="text-[11px] text-muted-foreground mb-2">
-                (Note: Actual email delivery is stubbed for Prompt 12 hardening. Share the secure direct link below).
+                (Note: Actual email delivery is stubbed for Prompt 12 hardening. Share the secure
+                direct link below).
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <input
@@ -267,7 +290,9 @@ export default function OrganizationSettingsPage() {
         ) : (
           <form onSubmit={handleSendInvite} className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">Teammate Email</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Teammate Email
+              </label>
               <Input
                 type="email"
                 placeholder="colleague@company.com"

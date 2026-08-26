@@ -4,7 +4,14 @@ import * as React from 'react';
 import { getSupabase } from '../../../lib/supabase';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ArrowRight, Bot } from 'lucide-react';
@@ -68,16 +75,18 @@ export default function SignUpPage() {
           <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary mb-2 shadow-sm">
             <Bot className="h-6 w-6" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">Create Workspace Account</CardTitle>
-          <CardDescription>
-            Join IRONLOOM AI Software Engineering Platform
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold tracking-tight">
+            Create Workspace Account
+          </CardTitle>
+          <CardDescription>Join IRONLOOM AI Software Engineering Platform</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSignUp}>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">Full Name</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Full Name
+              </label>
               <Input
                 type="text"
                 placeholder="Jane Doe"
@@ -87,7 +96,9 @@ export default function SignUpPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">Work Email</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Work Email
+              </label>
               <Input
                 type="email"
                 placeholder="jane@company.com"
@@ -97,7 +108,9 @@ export default function SignUpPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">Password</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Password
+              </label>
               <Input
                 type="password"
                 placeholder="Min 6 characters"

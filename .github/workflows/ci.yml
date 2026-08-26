@@ -56,6 +56,9 @@ jobs:
       - name: Run AI Gateway Failover Test Harness
         run: pnpm gateway:test
 
+      - name: Run Agent Evaluation Quality Gates
+        run: pnpm eval:run
+
       - name: Build Web Application
         run: pnpm --filter @ironloom/web build
         env:

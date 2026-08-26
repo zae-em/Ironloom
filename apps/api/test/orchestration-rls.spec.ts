@@ -9,7 +9,10 @@ describe('Orchestration Database Migration & Row-Level Security (RLS) Policy Tes
   const ORG_BETA = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
 
   it('should verify migration 004_orchestration_schema.sql contains RLS policies on all 3 orchestration tables', () => {
-    const migrationPath = path.resolve(__dirname, '../../../infra/migrations/004_orchestration_schema.sql');
+    const migrationPath = path.resolve(
+      __dirname,
+      '../../../infra/migrations/004_orchestration_schema.sql',
+    );
     const sql = fs.readFileSync(migrationPath, 'utf8');
 
     expect(sql).toContain('ALTER TABLE workflow_runs ENABLE ROW LEVEL SECURITY');
@@ -18,8 +21,12 @@ describe('Orchestration Database Migration & Row-Level Security (RLS) Policy Tes
 
     expect(sql).toContain('CREATE POLICY "Users can view workflow runs in their organizations"');
     expect(sql).toContain('CREATE POLICY "Users can create workflow runs in their organizations"');
-    expect(sql).toContain('CREATE POLICY "Users can view approval requests in their organizations"');
-    expect(sql).toContain('CREATE POLICY "Users can view workflow decisions in their organizations"');
+    expect(sql).toContain(
+      'CREATE POLICY "Users can view approval requests in their organizations"',
+    );
+    expect(sql).toContain(
+      'CREATE POLICY "Users can view workflow decisions in their organizations"',
+    );
   });
 
   it('should enforce multi-tenant isolation and deny cross-org workflow & approval access', () => {
@@ -29,7 +36,12 @@ describe('Orchestration Database Migration & Row-Level Security (RLS) Policy Tes
     ];
 
     const workflowRuns = [
-      { id: 'run-alpha', orgId: ORG_ALPHA, name: 'Alpha Drone Pipeline', status: 'paused_approval' },
+      {
+        id: 'run-alpha',
+        orgId: ORG_ALPHA,
+        name: 'Alpha Drone Pipeline',
+        status: 'paused_approval',
+      },
       { id: 'run-beta', orgId: ORG_BETA, name: 'Beta Fintech Pipeline', status: 'running' },
     ];
 

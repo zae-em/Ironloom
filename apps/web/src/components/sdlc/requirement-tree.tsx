@@ -104,7 +104,10 @@ export function RequirementTree({
     setExpandedStories({});
   };
 
-  const handleEpicStatusChange = async (epicId: string, status: 'approved' | 'rejected' | 'in_review') => {
+  const handleEpicStatusChange = async (
+    epicId: string,
+    status: 'approved' | 'rejected' | 'in_review',
+  ) => {
     setLoadingAction(`epic-status-${epicId}`);
     try {
       await apiClient.patch(`/sdlc/epics/${epicId}/status`, { status });
@@ -125,9 +128,7 @@ export function RequirementTree({
   const handleGenerateStories = async (epicId: string) => {
     setLoadingAction(`generate-stories-${epicId}`);
     try {
-      const generated = await apiClient.post<UserStory[]>(
-        `/sdlc/epics/${epicId}/generate-stories`,
-      );
+      const generated = await apiClient.post<UserStory[]>(`/sdlc/epics/${epicId}/generate-stories`);
       toast.success(`Requirements Engineer generated ${generated.length} user stories!`);
       // Auto-expand this epic
       setExpandedEpics((prev) => ({ ...prev, [epicId]: true }));
@@ -139,7 +140,10 @@ export function RequirementTree({
     }
   };
 
-  const handleStoryStatusChange = async (storyId: string, status: 'approved' | 'rejected' | 'in_review') => {
+  const handleStoryStatusChange = async (
+    storyId: string,
+    status: 'approved' | 'rejected' | 'in_review',
+  ) => {
     setLoadingAction(`story-status-${storyId}`);
     try {
       await apiClient.patch(`/sdlc/user-stories/${storyId}/status`, { status });
@@ -155,13 +159,29 @@ export function RequirementTree({
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'critical':
-        return <Badge className="bg-rose-500/10 text-rose-400 border-rose-500/30 text-[10px]">Critical</Badge>;
+        return (
+          <Badge className="bg-rose-500/10 text-rose-400 border-rose-500/30 text-[10px]">
+            Critical
+          </Badge>
+        );
       case 'high':
-        return <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/30 text-[10px]">High</Badge>;
+        return (
+          <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/30 text-[10px]">
+            High
+          </Badge>
+        );
       case 'medium':
-        return <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/30 text-[10px]">Medium</Badge>;
+        return (
+          <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/30 text-[10px]">
+            Medium
+          </Badge>
+        );
       default:
-        return <Badge className="bg-slate-500/10 text-slate-400 border-slate-500/30 text-[10px]">Low</Badge>;
+        return (
+          <Badge className="bg-slate-500/10 text-slate-400 border-slate-500/30 text-[10px]">
+            Low
+          </Badge>
+        );
     }
   };
 
@@ -348,7 +368,9 @@ export function RequirementTree({
 
                     {epicStories.length === 0 ? (
                       <div className="p-4 text-center rounded-lg bg-slate-900/60 border border-slate-800/80 space-y-2">
-                        <p className="text-xs text-slate-400">No user stories created yet for this epic.</p>
+                        <p className="text-xs text-slate-400">
+                          No user stories created yet for this epic.
+                        </p>
                         <Button
                           size="sm"
                           onClick={() => handleGenerateStories(epic.id)}
@@ -405,9 +427,12 @@ export function RequirementTree({
 
                                   <div className="text-xs text-slate-300 font-sans space-y-0.5">
                                     <div>
-                                      <span className="text-slate-500 font-semibold">As a</span> {story.asA},{' '}
-                                      <span className="text-slate-500 font-semibold">I want</span> {story.iWant},{' '}
-                                      <span className="text-slate-500 font-semibold">so that</span> {story.soThat}
+                                      <span className="text-slate-500 font-semibold">As a</span>{' '}
+                                      {story.asA},{' '}
+                                      <span className="text-slate-500 font-semibold">I want</span>{' '}
+                                      {story.iWant},{' '}
+                                      <span className="text-slate-500 font-semibold">so that</span>{' '}
+                                      {story.soThat}
                                     </div>
                                   </div>
                                 </div>
@@ -460,7 +485,9 @@ export function RequirementTree({
                                 </div>
 
                                 {criteria.length === 0 ? (
-                                  <p className="text-slate-500 text-[11px] italic">No criteria specified.</p>
+                                  <p className="text-slate-500 text-[11px] italic">
+                                    No criteria specified.
+                                  </p>
                                 ) : (
                                   <div className="space-y-2">
                                     {criteria.map((c, critIdx) => (
@@ -472,9 +499,20 @@ export function RequirementTree({
                                           Scenario {critIdx + 1}: {c.scenarioTitle}
                                         </div>
                                         <div className="text-slate-300 pl-2 space-y-0.5">
-                                          <div><span className="text-emerald-400 font-bold">Given</span> {c.givenText}</div>
-                                          <div><span className="text-blue-400 font-bold">When</span> {c.whenText}</div>
-                                          <div><span className="text-purple-400 font-bold">Then</span> {c.thenText}</div>
+                                          <div>
+                                            <span className="text-emerald-400 font-bold">
+                                              Given
+                                            </span>{' '}
+                                            {c.givenText}
+                                          </div>
+                                          <div>
+                                            <span className="text-blue-400 font-bold">When</span>{' '}
+                                            {c.whenText}
+                                          </div>
+                                          <div>
+                                            <span className="text-purple-400 font-bold">Then</span>{' '}
+                                            {c.thenText}
+                                          </div>
                                         </div>
                                       </div>
                                     ))}

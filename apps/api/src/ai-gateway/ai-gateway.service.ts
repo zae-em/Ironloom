@@ -43,13 +43,16 @@ export class AiGatewayService {
     const retryDelayMs = this.configService.get<number>('aiGateway.retryDelayMs', 500);
 
     // 2. Build provider candidate chain
-    const defaultProvider = (this.configService.get<string>('aiGateway.defaultProvider', 'ollama')) as AiProviderName;
-    const configuredFallbacks = (this.configService.get<string[]>('aiGateway.fallbackProviders', ['groq'])) as AiProviderName[];
+    const defaultProvider = this.configService.get<string>(
+      'aiGateway.defaultProvider',
+      'ollama',
+    ) as AiProviderName;
+    const configuredFallbacks = this.configService.get<string[]>('aiGateway.fallbackProviders', [
+      'groq',
+    ]) as AiProviderName[];
 
     const primaryProvider =
-      request.preferredProvider ||
-      options.agentDefaultProvider ||
-      defaultProvider;
+      request.preferredProvider || options.agentDefaultProvider || defaultProvider;
 
     const fallbackProviders =
       request.fallbackProviders ||
@@ -71,7 +74,9 @@ export class AiGatewayService {
       const adapter = this.providerRegistry.get(providerName);
 
       if (!adapter) {
-        this.logger.warn(`Provider '${providerName}' is not registered in AI Gateway registry. Skipping.`);
+        this.logger.warn(
+          `Provider '${providerName}' is not registered in AI Gateway registry. Skipping.`,
+        );
         continue;
       }
 
@@ -159,7 +164,9 @@ export class AiGatewayService {
             errMsg.includes('ENOTFOUND');
 
           if (isUnreachable) {
-            this.logger.warn(`Provider ${providerName} connection refused. Advancing immediately to fallback.`);
+            this.logger.warn(
+              `Provider ${providerName} connection refused. Advancing immediately to fallback.`,
+            );
             break;
           }
 
@@ -170,12 +177,16 @@ export class AiGatewayService {
         }
       }
 
-      this.logger.warn(`Provider '${providerName}' exhausted all retry attempts. Failing over to next provider.`);
+      this.logger.warn(
+        `Provider '${providerName}' exhausted all retry attempts. Failing over to next provider.`,
+      );
     }
 
     // 8. All providers in fallback chain failed -> Log failure and throw
     const totalLatencyMs = Date.now() - totalStartTime;
-    const failureSummary = errors.map((e) => `[${e.provider} #${e.attempt}]: ${e.error}`).join(' | ');
+    const failureSummary = errors
+      .map((e) => `[${e.provider} #${e.attempt}]: ${e.error}`)
+      .join(' | ');
 
     await this.auditLogRepository.create({
       orgId: request.orgId || '00000000-0000-0000-0000-000000000000',

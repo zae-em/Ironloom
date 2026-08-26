@@ -43,7 +43,10 @@ export function Sidebar() {
     <aside className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-border bg-card/60 backdrop-blur-md">
       {/* Brand Header */}
       <div className="flex h-14 items-center border-b border-border px-5">
-        <a href="/dashboard" className="flex items-center gap-2 font-bold tracking-tight text-foreground">
+        <a
+          href="/dashboard"
+          className="flex items-center gap-2 font-bold tracking-tight text-foreground"
+        >
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground font-black text-xs shadow-sm">
             IL
           </div>
@@ -63,7 +66,9 @@ export function Sidebar() {
         </div>
 
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+          const isActive =
+            pathname === item.href ||
+            (item.href !== '/dashboard' && pathname.startsWith(item.href));
           const Icon = item.icon;
 
           return (
@@ -78,7 +83,12 @@ export function Sidebar() {
               )}
             >
               <div className="flex items-center gap-3">
-                <Icon className={cn('h-4 w-4', isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground')} />
+                <Icon
+                  className={cn(
+                    'h-4 w-4',
+                    isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground',
+                  )}
+                />
                 <span>{item.name}</span>
               </div>
               {item.badge && (
@@ -95,8 +105,12 @@ export function Sidebar() {
       <div className="border-t border-border p-3">
         <div className="flex items-center justify-between rounded-lg bg-muted/40 p-2 text-xs">
           <div className="flex flex-col truncate pr-2">
-            <span className="font-medium text-foreground truncate">{user?.name || user?.email?.split('@')[0]}</span>
-            <span className="text-[10px] text-muted-foreground capitalize">{userRole || 'Member'}</span>
+            <span className="font-medium text-foreground truncate">
+              {user?.name || user?.email?.split('@')[0]}
+            </span>
+            <span className="text-[10px] text-muted-foreground capitalize">
+              {userRole || 'Member'}
+            </span>
           </div>
           <button
             onClick={() => signOut()}

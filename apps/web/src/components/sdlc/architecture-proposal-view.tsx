@@ -92,8 +92,7 @@ export function ArchitectureProposalView({
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedMermaid, setCopiedMermaid] = useState(false);
 
-  const currentProposal =
-    proposals.find((p) => p.version === selectedVersion) || proposals[0];
+  const currentProposal = proposals.find((p) => p.version === selectedVersion) || proposals[0];
 
   const handleGenerateArchitecture = async () => {
     setIsGenerating(true);
@@ -101,9 +100,7 @@ export function ArchitectureProposalView({
       const created = await apiClient.post<ArchitectureProposal>(
         `/projects/${projectId}/sdlc/generate-architecture`,
       );
-      toast.success(
-        `System Architect Agent synthesized Proposal v${created.version}!`,
-      );
+      toast.success(`System Architect Agent synthesized Proposal v${created.version}!`);
       setSelectedVersion(created.version);
       if (onRefresh) onRefresh();
     } catch (err: any) {
@@ -116,10 +113,9 @@ export function ArchitectureProposalView({
   const handleStatusChange = async (status: 'approved' | 'rejected' | 'in_review') => {
     if (!currentProposal) return;
     try {
-      await apiClient.patch(
-        `/sdlc/architecture-proposals/${currentProposal.id}/status`,
-        { status },
-      );
+      await apiClient.patch(`/sdlc/architecture-proposals/${currentProposal.id}/status`, {
+        status,
+      });
       toast.success(`Architecture Proposal marked as ${status.replace('_', ' ')}`);
       if (onRefresh) onRefresh();
     } catch (err: any) {
@@ -167,7 +163,8 @@ export function ArchitectureProposalView({
         <div className="space-y-1">
           <h3 className="text-base font-bold text-white">No Architecture Proposals Yet</h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto">
-            Once user stories and acceptance criteria are approved, invoke the System Architect Agent to synthesize a complete technical blueprint.
+            Once user stories and acceptance criteria are approved, invoke the System Architect
+            Agent to synthesize a complete technical blueprint.
           </p>
         </div>
         <Button
@@ -220,9 +217,7 @@ export function ArchitectureProposalView({
               </div>
             </div>
 
-            <h2 className="text-xl font-bold text-white tracking-tight">
-              {currentProposal.title}
-            </h2>
+            <h2 className="text-xl font-bold text-white tracking-tight">{currentProposal.title}</h2>
             <p className="text-xs text-slate-400 leading-relaxed max-w-3xl">
               {currentProposal.summary}
             </p>

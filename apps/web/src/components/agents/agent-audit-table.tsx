@@ -59,9 +59,7 @@ export function AgentAuditTable({ logs, isLoading = false }: AgentAuditTableProp
             Agent Execution & Cost Audit Trail
           </h3>
         </div>
-        <span className="text-xs text-slate-500 font-mono">
-          {logs.length} logged runs
-        </span>
+        <span className="text-xs text-slate-500 font-mono">{logs.length} logged runs</span>
       </div>
 
       <div className="overflow-x-auto">
@@ -92,30 +90,29 @@ export function AgentAuditTable({ logs, isLoading = false }: AgentAuditTableProp
               </tr>
             ) : (
               logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-800/30 transition-colors font-mono text-[11px]">
+                <tr
+                  key={log.id}
+                  className="hover:bg-slate-800/30 transition-colors font-mono text-[11px]"
+                >
                   <td className="py-2.5 px-4 text-slate-400">
-                    {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    {new Date(log.created_at).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                    })}
                   </td>
-                  <td className="py-2.5 px-4 text-indigo-300 font-semibold">
-                    {log.actor_id}
-                  </td>
-                  <td className="py-2.5 px-4 text-slate-200">
-                    {log.action}
-                  </td>
+                  <td className="py-2.5 px-4 text-indigo-300 font-semibold">{log.actor_id}</td>
+                  <td className="py-2.5 px-4 text-slate-200">{log.action}</td>
                   <td className="py-2.5 px-4">
                     <span className="text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20 text-[10px]">
                       {log.model || 'default'} ({log.provider || 'auto'})
                     </span>
                   </td>
-                  <td className="py-2.5 px-4 text-slate-400">
-                    {log.latency_ms} ms
-                  </td>
+                  <td className="py-2.5 px-4 text-slate-400">{log.latency_ms} ms</td>
                   <td className="py-2.5 px-4 text-emerald-400 font-semibold">
                     ${Number(log.cost_usd || 0).toFixed(5)}
                   </td>
-                  <td className="py-2.5 px-4">
-                    {getStatusBadge(log.status)}
-                  </td>
+                  <td className="py-2.5 px-4">{getStatusBadge(log.status)}</td>
                 </tr>
               ))
             )}

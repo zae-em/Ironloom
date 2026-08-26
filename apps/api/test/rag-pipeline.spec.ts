@@ -39,7 +39,8 @@ describe('RAG Pipeline & Vector Search Integration Tests', () => {
       projectId: PROJ_ALPHA,
       documentType: 'business_case',
       documentId: 'bc-1',
-      content: 'Autonomous drone guidance systems require ultra-low latency telemetry and obstacle detection algorithms.',
+      content:
+        'Autonomous drone guidance systems require ultra-low latency telemetry and obstacle detection algorithms.',
     });
 
     await ragService.ingestDocument({
@@ -47,7 +48,8 @@ describe('RAG Pipeline & Vector Search Integration Tests', () => {
       projectId: PROJ_ALPHA,
       documentType: 'coding_standard',
       documentId: 'cs-1',
-      content: 'All TypeScript services must use strict type checking and Zod schema validation for external inputs.',
+      content:
+        'All TypeScript services must use strict type checking and Zod schema validation for external inputs.',
     });
 
     // 2. Query for drone guidance

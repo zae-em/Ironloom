@@ -4,7 +4,14 @@ import * as React from 'react';
 import { getSupabase } from '../../../lib/supabase';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ShieldCheck } from 'lucide-react';
@@ -58,7 +65,9 @@ export default function ResetPasswordPage() {
         <form onSubmit={handleUpdatePassword}>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">New Password</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                New Password
+              </label>
               <Input
                 type="password"
                 placeholder="Min 6 characters"
@@ -68,7 +77,9 @@ export default function ResetPasswordPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1 block">Confirm Password</label>
+              <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                Confirm Password
+              </label>
               <Input
                 type="password"
                 placeholder="Confirm password"

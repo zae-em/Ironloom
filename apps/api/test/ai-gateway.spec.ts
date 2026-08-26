@@ -29,8 +29,17 @@ describe('AiGatewayService Unit Tests', () => {
                 fallbackProviders: ['groq'],
                 maxRetries: 1,
                 retryDelayMs: 10,
-                ollama: { baseUrl: 'http://localhost:11434', defaultModel: 'llama3.1', timeoutMs: 1000 },
-                groq: { apiKey: 'mock_key', baseUrl: 'https://api.groq.com', defaultModel: 'llama-3.3-70b-versatile', timeoutMs: 1000 },
+                ollama: {
+                  baseUrl: 'http://localhost:11434',
+                  defaultModel: 'llama3.1',
+                  timeoutMs: 1000,
+                },
+                groq: {
+                  apiKey: 'mock_key',
+                  baseUrl: 'https://api.groq.com',
+                  defaultModel: 'llama-3.3-70b-versatile',
+                  timeoutMs: 1000,
+                },
               },
             }),
           ],
@@ -97,7 +106,12 @@ describe('AiGatewayService Unit Tests', () => {
     // Simulate groq quota exhaustion
     jest.spyOn(quotaTracker, 'checkAvailability').mockImplementation(async (provider) => {
       if (provider === 'mock') {
-        return { isAvailable: false, remainingRPM: 0, remainingTPM: 0, reason: 'RPM quota reached' };
+        return {
+          isAvailable: false,
+          remainingRPM: 0,
+          remainingTPM: 0,
+          reason: 'RPM quota reached',
+        };
       }
       return { isAvailable: true, remainingRPM: 30, remainingTPM: 6000 };
     });

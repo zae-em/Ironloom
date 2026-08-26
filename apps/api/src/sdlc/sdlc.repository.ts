@@ -26,7 +26,9 @@ export class SdlcRepository {
   // --------------------------------------------------------------------------
   // BUSINESS CASES
   // --------------------------------------------------------------------------
-  async createBusinessCase(item: Omit<BusinessCase, 'id' | 'createdAt' | 'updatedAt'>): Promise<BusinessCase> {
+  async createBusinessCase(
+    item: Omit<BusinessCase, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<BusinessCase> {
     const id = uuidv4();
     const now = new Date().toISOString();
     const record: BusinessCase = {
@@ -499,7 +501,11 @@ export class SdlcRepository {
   async getArchitectureProposal(id: string): Promise<ArchitectureProposal> {
     const admin = this.supabaseService.getAdminClient();
     try {
-      const { data, error } = await admin.from('architecture_proposals').select('*').eq('id', id).single();
+      const { data, error } = await admin
+        .from('architecture_proposals')
+        .select('*')
+        .eq('id', id)
+        .single();
       if (!error && data) {
         return {
           id: data.id,
@@ -564,7 +570,10 @@ export class SdlcRepository {
 
     const admin = this.supabaseService.getAdminClient();
     try {
-      await admin.from('architecture_proposals').update({ status, updated_at: current.updatedAt }).eq('id', id);
+      await admin
+        .from('architecture_proposals')
+        .update({ status, updated_at: current.updatedAt })
+        .eq('id', id);
     } catch {}
 
     this.memoryArchitecture.set(id, current);

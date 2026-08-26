@@ -1,8 +1,4 @@
-import {
-  AiGatewayRequest,
-  AiProviderName,
-  TokenUsage,
-} from '@ironloom/shared';
+import { AiGatewayRequest, AiProviderName, TokenUsage } from '@ironloom/shared';
 
 export interface ProviderCompletionResult {
   text: string;

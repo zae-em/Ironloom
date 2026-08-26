@@ -47,7 +47,9 @@ export class ProductManagerAgent extends BaseAgent {
     provider: string;
     retrievedContextCount: number;
   }> {
-    this.logger.log(`Decomposing Business Case ${params.businessCase.id} into epics for project ${params.projectName}`);
+    this.logger.log(
+      `Decomposing Business Case ${params.businessCase.id} into epics for project ${params.projectName}`,
+    );
 
     // 1. RAG Retrieval for past epics & feature patterns
     const ragResults = await this.ragService.retrieveContext({
@@ -80,10 +82,7 @@ export class ProductManagerAgent extends BaseAgent {
     });
 
     // 4. Parse JSON Output
-    const parsedOutput = this.extractAndValidateJson<EpicsOutput>(
-      response.text,
-      EpicsOutputSchema,
-    );
+    const parsedOutput = this.extractAndValidateJson<EpicsOutput>(response.text, EpicsOutputSchema);
 
     return {
       epicsOutput: parsedOutput,

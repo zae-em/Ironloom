@@ -18,7 +18,9 @@ test.describe('IRONLOOM OS Core SDLC & Workspace Smoke Tests (Prompts 1–4)', (
     await expect(page.locator('text=Backlog Breakdown')).toBeVisible();
   });
 
-  test('should navigate to Core SDLC Requirements workspace and open Idea Submission Modal', async ({ page }) => {
+  test('should navigate to Core SDLC Requirements workspace and open Idea Submission Modal', async ({
+    page,
+  }) => {
     await page.goto('/login');
     await page.fill('input[type="email"]', 'alice@alpha.io');
     await page.fill('input[type="password"]', 'password123');
@@ -41,7 +43,10 @@ test.describe('IRONLOOM OS Core SDLC & Workspace Smoke Tests (Prompts 1–4)', (
     await expect(page.locator('button:has-text("Analyze with BA Agent")')).toBeVisible();
 
     // Fill sample idea
-    await page.fill('textarea', 'Build a real-time collision avoidance telemetry stream under 100ms budget.');
+    await page.fill(
+      'textarea',
+      'Build a real-time collision avoidance telemetry stream under 100ms budget.',
+    );
   });
 
   test('should view Engineering Tasks Kanban board and interact with columns', async ({ page }) => {
@@ -66,7 +71,9 @@ test.describe('IRONLOOM OS Core SDLC & Workspace Smoke Tests (Prompts 1–4)', (
     await expect(page.locator('text=Create SDLC Task')).toBeVisible();
   });
 
-  test('should view Specialized AI Agent roster and open LLM routing configuration', async ({ page }) => {
+  test('should view Specialized AI Agent roster and open LLM routing configuration', async ({
+    page,
+  }) => {
     await page.goto('/login');
     await page.fill('input[type="email"]', 'alice@alpha.io');
     await page.fill('input[type="password"]', 'password123');
@@ -87,7 +94,9 @@ test.describe('IRONLOOM OS Core SDLC & Workspace Smoke Tests (Prompts 1–4)', (
     await expect(page.locator('text=Groq Cloud')).toBeVisible();
   });
 
-  test('should navigate to AI provider settings and display Ollama & Groq telemetry', async ({ page }) => {
+  test('should navigate to AI provider settings and display Ollama & Groq telemetry', async ({
+    page,
+  }) => {
     await page.goto('/login');
     await page.fill('input[type="email"]', 'alice@alpha.io');
     await page.fill('input[type="password"]', 'password123');

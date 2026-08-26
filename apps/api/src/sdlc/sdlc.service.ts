@@ -104,7 +104,9 @@ export class SdlcService {
       createdEpics.push(epic);
     }
 
-    this.logger.log(`Generated ${createdEpics.length} epics for Business Case ${params.businessCaseId}`);
+    this.logger.log(
+      `Generated ${createdEpics.length} epics for Business Case ${params.businessCaseId}`,
+    );
     return createdEpics;
   }
 
@@ -184,7 +186,9 @@ export class SdlcService {
       status: 'in_review',
     });
 
-    this.logger.log(`Generated Architecture Proposal v${nextVersion} (${proposal.id}) for project ${params.projectId}`);
+    this.logger.log(
+      `Generated Architecture Proposal v${nextVersion} (${proposal.id}) for project ${params.projectId}`,
+    );
     return proposal;
   }
 
@@ -220,17 +224,16 @@ export class SdlcService {
     return updated;
   }
 
-  async updateUserStoryStatus(
-    id: string,
-    status: ReviewStatus,
-    orgId: string,
-  ): Promise<UserStory> {
+  async updateUserStoryStatus(id: string, status: ReviewStatus, orgId: string): Promise<UserStory> {
     const updated = await this.repo.updateUserStoryStatus(id, status);
 
     // If approved, ingest into RAG
     if (status === 'approved') {
       const criteriaStr = updated.acceptanceCriteria
-        .map((c) => `Scenario: ${c.scenarioTitle} | Given ${c.givenText} When ${c.whenText} Then ${c.thenText}`)
+        .map(
+          (c) =>
+            `Scenario: ${c.scenarioTitle} | Given ${c.givenText} When ${c.whenText} Then ${c.thenText}`,
+        )
         .join('\n');
       const content = `User Story: ${updated.title}\nAs a ${updated.asA}, I want ${updated.iWant} so that ${updated.soThat}\nAcceptance Criteria:\n${criteriaStr}`;
 
@@ -255,7 +258,9 @@ export class SdlcService {
     const updated = await this.repo.updateArchitectureStatus(id, status);
 
     if (status === 'approved') {
-      const componentsStr = updated.components.map((c) => `${c.name}: ${c.description} [Tech: ${c.techChoice}]`).join('\n');
+      const componentsStr = updated.components
+        .map((c) => `${c.name}: ${c.description} [Tech: ${c.techChoice}]`)
+        .join('\n');
       const content = `Architecture Proposal v${updated.version}: ${updated.title}\nSummary: ${updated.summary}\nComponents:\n${componentsStr}`;
 
       await this.ragService.ingestDocument({

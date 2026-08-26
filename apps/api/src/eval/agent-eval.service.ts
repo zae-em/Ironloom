@@ -1,10 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  BusinessCase,
-  Epic,
-  UserStory,
-  ArchitectureProposal,
-} from '@ironloom/shared';
+import { BusinessCase, Epic, UserStory, ArchitectureProposal } from '@ironloom/shared';
 
 export interface EvalFixture {
   id: string;
@@ -46,7 +41,9 @@ export class AgentEvalService {
     if (bc.problemStatement && bc.problemStatement.length > 20) {
       score += 0.15;
       const lowerPs = bc.problemStatement.toLowerCase();
-      const topicMatches = fixture.expectedTopics.filter((t) => lowerPs.includes(t.toLowerCase())).length;
+      const topicMatches = fixture.expectedTopics.filter((t) =>
+        lowerPs.includes(t.toLowerCase()),
+      ).length;
       if (topicMatches > 0) {
         score += 0.1;
         notes.push(`Problem statement covers ${topicMatches} expected domain keywords.`);
@@ -73,7 +70,7 @@ export class AgentEvalService {
 
     // Success Metrics (0.20)
     if (bc.successMetrics && bc.successMetrics.length >= 2) {
-      score += 0.20;
+      score += 0.2;
     } else {
       notes.push('Success metrics should include at least 2 measurable criteria.');
     }
@@ -118,7 +115,7 @@ export class AgentEvalService {
     // Rationale & Description richness (0.30)
     const detailedEpics = epics.filter((e) => e.description && e.description.length > 20).length;
     if (detailedEpics === epics.length) {
-      score += 0.30;
+      score += 0.3;
     } else {
       score += 0.15;
       notes.push('Some epics have brief or missing descriptions.');
@@ -136,20 +133,27 @@ export class AgentEvalService {
     }
 
     // Story volume (0.30)
-    score += Math.min(0.30, (stories.length / (fixture.minimumEpics * fixture.minimumStoriesPerEpic)) * 0.30);
+    score += Math.min(
+      0.3,
+      (stories.length / (fixture.minimumEpics * fixture.minimumStoriesPerEpic)) * 0.3,
+    );
 
     // Persona format check (0.30)
     const properFormatCount = stories.filter(
       (s) => s.asA && s.iWant && s.soThat && s.asA.length > 2 && s.iWant.length > 2,
     ).length;
-    score += (properFormatCount / stories.length) * 0.30;
+    score += (properFormatCount / stories.length) * 0.3;
 
     // Gherkin Acceptance Criteria syntax conformity (0.40)
     let gherkinCompliantCount = 0;
     for (const s of stories) {
       if (s.acceptanceCriteria && s.acceptanceCriteria.length > 0) {
         const hasGherkin = s.acceptanceCriteria.some((c) => {
-          const lower = ((c.givenText || '') + (c.whenText || '') + (c.thenText || '')).toLowerCase();
+          const lower = (
+            (c.givenText || '') +
+            (c.whenText || '') +
+            (c.thenText || '')
+          ).toLowerCase();
           return lower.length > 10;
         });
         if (hasGherkin) gherkinCompliantCount++;
@@ -157,7 +161,7 @@ export class AgentEvalService {
     }
 
     const gherkinRatio = gherkinCompliantCount / stories.length;
-    score += gherkinRatio * 0.40;
+    score += gherkinRatio * 0.4;
     if (gherkinRatio < 0.8) {
       notes.push(`Gherkin acceptance criteria compliance is ${(gherkinRatio * 100).toFixed(0)}%.`);
     } else {
@@ -167,7 +171,10 @@ export class AgentEvalService {
     return { score: Number(score.toFixed(2)), notes };
   }
 
-  evaluateArchitecture(proposal: ArchitectureProposal, fixture: EvalFixture): { score: number; notes: string[] } {
+  evaluateArchitecture(
+    proposal: ArchitectureProposal,
+    fixture: EvalFixture,
+  ): { score: number; notes: string[] } {
     let score = 0;
     const notes: string[] = [];
 
@@ -177,7 +184,7 @@ export class AgentEvalService {
 
     // Components check (0.30)
     if (proposal.components && proposal.components.length >= fixture.minimumComponents) {
-      score += 0.30;
+      score += 0.3;
       notes.push(`Components count (${proposal.components.length}) meets minimum requirement.`);
     } else {
       score += 0.15;
@@ -186,9 +193,9 @@ export class AgentEvalService {
 
     // Tech stack choices (0.20)
     if (proposal.techStack && proposal.techStack.length >= 3) {
-      score += 0.20;
+      score += 0.2;
     } else {
-      score += 0.10;
+      score += 0.1;
       notes.push('Tech stack list has fewer than 3 entries.');
     }
 
@@ -197,12 +204,17 @@ export class AgentEvalService {
       score += 0.25;
       notes.push(`Data model contains ${proposal.dataModel.entities.length} relational entities.`);
     } else {
-      score += 0.10;
+      score += 0.1;
       notes.push('Data model entities count is low.');
     }
 
     // Mermaid diagram syntax check (0.25)
-    if (proposal.diagramMermaid && (proposal.diagramMermaid.includes('graph TD') || proposal.diagramMermaid.includes('graph LR') || proposal.diagramMermaid.includes('flowchart'))) {
+    if (
+      proposal.diagramMermaid &&
+      (proposal.diagramMermaid.includes('graph TD') ||
+        proposal.diagramMermaid.includes('graph LR') ||
+        proposal.diagramMermaid.includes('flowchart'))
+    ) {
       score += 0.25;
       notes.push('Valid Mermaid graph syntax present.');
     } else {
@@ -221,7 +233,7 @@ export class AgentEvalService {
     architecture: ArchitectureProposal;
     passThreshold?: number;
   }): EvalScorecard {
-    const { fixture, businessCase, epics, stories, architecture, passThreshold = 0.80 } = params;
+    const { fixture, businessCase, epics, stories, architecture, passThreshold = 0.8 } = params;
 
     const bcResult = this.evaluateBusinessCase(businessCase, fixture);
     const epicsResult = this.evaluateEpics(epics, fixture);

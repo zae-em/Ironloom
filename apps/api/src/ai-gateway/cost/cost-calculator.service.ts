@@ -17,16 +17,16 @@ export class CostCalculatorService {
     'llama3-70b-8192': { promptCostPerMillion: 0.59, completionCostPerMillion: 0.79 },
     'llama3-8b-8192': { promptCostPerMillion: 0.05, completionCostPerMillion: 0.08 },
     'mixtral-8x7b-32768': { promptCostPerMillion: 0.24, completionCostPerMillion: 0.24 },
-    'gemma2-9b-it': { promptCostPerMillion: 0.20, completionCostPerMillion: 0.20 },
-    'qwen-2.5-32b': { promptCostPerMillion: 0.20, completionCostPerMillion: 0.20 },
+    'gemma2-9b-it': { promptCostPerMillion: 0.2, completionCostPerMillion: 0.2 },
+    'qwen-2.5-32b': { promptCostPerMillion: 0.2, completionCostPerMillion: 0.2 },
 
     // OpenAI models (for reference/future extension)
-    'gpt-4o': { promptCostPerMillion: 2.50, completionCostPerMillion: 10.00 },
-    'gpt-4o-mini': { promptCostPerMillion: 0.15, completionCostPerMillion: 0.60 },
+    'gpt-4o': { promptCostPerMillion: 2.5, completionCostPerMillion: 10.0 },
+    'gpt-4o-mini': { promptCostPerMillion: 0.15, completionCostPerMillion: 0.6 },
 
     // Anthropic models
-    'claude-3-5-sonnet': { promptCostPerMillion: 3.00, completionCostPerMillion: 15.00 },
-    'claude-3-5-haiku': { promptCostPerMillion: 0.80, completionCostPerMillion: 4.00 },
+    'claude-3-5-sonnet': { promptCostPerMillion: 3.0, completionCostPerMillion: 15.0 },
+    'claude-3-5-haiku': { promptCostPerMillion: 0.8, completionCostPerMillion: 4.0 },
   };
 
   calculateCost(provider: AiProviderName, model: string, usage: TokenUsage): number {
@@ -65,8 +65,8 @@ export class CostCalculatorService {
 
     // Default fallback pricing for hosted models (e.g. $0.10/M)
     return {
-      promptCostPerMillion: 0.10,
-      completionCostPerMillion: 0.10,
+      promptCostPerMillion: 0.1,
+      completionCostPerMillion: 0.1,
     };
   }
 }

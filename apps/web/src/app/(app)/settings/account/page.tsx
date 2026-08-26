@@ -2,7 +2,14 @@
 
 import * as React from 'react';
 import { useAuth } from '../../../../components/providers/auth-provider';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '../../../../components/ui/card';
 import { Button } from '../../../../components/ui/button';
 import { Input } from '../../../../components/ui/input';
 import { getSupabase } from '../../../../lib/supabase';
@@ -72,7 +79,9 @@ export default function AccountSettingsPage() {
     <div className="space-y-6 animate-in fade-in duration-200">
       <div className="border-b border-border pb-5">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Account Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage your personal profile and authentication credentials.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Manage your personal profile and authentication credentials.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -82,21 +91,39 @@ export default function AccountSettingsPage() {
             <CardTitle className="text-base flex items-center gap-2">
               <User className="h-4 w-4 text-primary" /> Profile Information
             </CardTitle>
-            <CardDescription className="text-xs">Update your display name and view account details.</CardDescription>
+            <CardDescription className="text-xs">
+              Update your display name and view account details.
+            </CardDescription>
           </CardHeader>
           <form onSubmit={handleUpdateProfile}>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-muted-foreground mb-1 block">Email Address</label>
-                <Input value={user?.email || ''} readOnly disabled className="opacity-70 font-mono" />
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                  Email Address
+                </label>
+                <Input
+                  value={user?.email || ''}
+                  readOnly
+                  disabled
+                  className="opacity-70 font-mono"
+                />
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground mb-1 block">Display Name</label>
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                  Display Name
+                </label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} required />
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground mb-1 block">User UUID</label>
-                <Input value={user?.userId || ''} readOnly disabled className="opacity-70 font-mono text-xs" />
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                  User UUID
+                </label>
+                <Input
+                  value={user?.userId || ''}
+                  readOnly
+                  disabled
+                  className="opacity-70 font-mono text-xs"
+                />
               </div>
             </CardContent>
             <CardFooter className="flex justify-end pt-2">
@@ -118,7 +145,9 @@ export default function AccountSettingsPage() {
           <form onSubmit={handleUpdatePassword}>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-muted-foreground mb-1 block">New Password</label>
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                  New Password
+                </label>
                 <Input
                   type="password"
                   placeholder="Min 6 characters"
@@ -128,7 +157,9 @@ export default function AccountSettingsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground mb-1 block">Confirm New Password</label>
+                <label className="text-xs font-semibold text-muted-foreground mb-1 block">
+                  Confirm New Password
+                </label>
                 <Input
                   type="password"
                   placeholder="Repeat new password"

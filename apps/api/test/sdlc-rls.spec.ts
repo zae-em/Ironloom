@@ -55,9 +55,14 @@ describe('SDLC Database Migration & Row-Level Security (RLS) Policy Tests', () =
       return architectureProposals.filter((ap) => isOrgMember(userId, ap.orgId));
     }
 
-    function insertProposalAsUser(userId: string, item: { id: string; orgId: string; title: string }) {
+    function insertProposalAsUser(
+      userId: string,
+      item: { id: string; orgId: string; title: string },
+    ) {
       if (!isOrgMember(userId, item.orgId)) {
-        throw new Error(`Postgres RLS Policy Violation: Access denied to organization ${item.orgId}`);
+        throw new Error(
+          `Postgres RLS Policy Violation: Access denied to organization ${item.orgId}`,
+        );
       }
       architectureProposals.push(item);
       return item;

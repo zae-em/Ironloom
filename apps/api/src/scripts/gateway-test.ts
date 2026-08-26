@@ -53,7 +53,7 @@ async function runHarness() {
       taskType: 'architecture_design',
       prompt: 'Design a high-throughput event processing architecture for IoT telemetry.',
       preferredProvider: 'ollama',
-      fallbackProviders: ['groq'],
+      fallbackProviders: ['groq', 'mock'],
       temperature: 0.2,
       maxTokens: 500,
       orgId: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
@@ -83,7 +83,9 @@ async function runHarness() {
         auditLogId: res1.auditLogId,
       });
     } catch (err: any) {
-      console.log(`  [Note] Ollama local service not active (${err.message}). Testing via registered mock provider for zero-cost validation.`);
+      console.log(
+        `  [Note] Ollama local service not active (${err.message}). Testing via registered mock provider for zero-cost validation.`,
+      );
       const res1Mock = await gatewayService.complete({
         ...req1,
         preferredProvider: 'mock',
@@ -111,8 +113,8 @@ async function runHarness() {
       taskType: 'code_generation',
       prompt: 'Write a TypeScript function to calculate sliding window token rate limits.',
       preferredProvider: 'groq',
-      fallbackProviders: ['ollama'],
-      model: 'llama-3.3-70b-versatile',
+      fallbackProviders: ['mock'],
+      model: process.env.GROQ_DEFAULT_MODEL || 'qwen/qwen3.8-27b',
       temperature: 0.1,
       maxTokens: 400,
       orgId: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
@@ -133,7 +135,10 @@ async function runHarness() {
     // Verify audit log entry was written
     const latestLogs = await auditRepo.findLatest(1);
     const recordedLog = latestLogs[0];
-    printRow('Audit Log Confirmed', recordedLog ? `Yes (${recordedLog.action}, $${recordedLog.cost_usd})` : 'Pending');
+    printRow(
+      'Audit Log Confirmed',
+      recordedLog ? `Yes (${recordedLog.action}, $${recordedLog.cost_usd})` : 'Pending',
+    );
 
     testResults.push({
       testName: '2. Groq Primary (Cost Tracking)',

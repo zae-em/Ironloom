@@ -1,18 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Bot,
-  Cpu,
-  Sparkles,
-  Server,
-  Zap,
-  Sliders,
-  DollarSign,
-  CheckCircle2,
-} from 'lucide-react';
+import { Bot, Cpu, Sparkles, Server, Zap, Sliders, DollarSign, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
@@ -35,12 +32,7 @@ interface AgentConfigModalProps {
   onSave: (updatedAgent: AgentConfig) => void;
 }
 
-export function AgentConfigModal({
-  agent,
-  isOpen,
-  onClose,
-  onSave,
-}: AgentConfigModalProps) {
+export function AgentConfigModal({ agent, isOpen, onClose, onSave }: AgentConfigModalProps) {
   if (!agent) return null;
 
   const [provider, setProvider] = useState<'ollama' | 'groq' | 'mock' | 'auto'>(
@@ -66,7 +58,12 @@ export function AgentConfigModal({
       model,
       temperature: Number(temperature),
       maxTokens: Number(maxTokens),
-      costProfile: provider === 'ollama' ? 'Zero Cost (Local)' : provider === 'groq' ? 'Hosted Fast ($0.05 / 1M)' : 'Automatic Fallback',
+      costProfile:
+        provider === 'ollama'
+          ? 'Zero Cost (Local)'
+          : provider === 'groq'
+            ? 'Hosted Fast ($0.05 / 1M)'
+            : 'Automatic Fallback',
     };
 
     onSave(updated);
@@ -80,7 +77,9 @@ export function AgentConfigModal({
         <div className="p-5 border-b border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/30">
           <div className="flex items-center gap-2 text-indigo-400 mb-1">
             <Sliders className="w-4 h-4" />
-            <span className="text-xs font-semibold uppercase tracking-wider">Per-Agent LLM Routing</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">
+              Per-Agent LLM Routing
+            </span>
           </div>
           <DialogTitle className="text-base font-bold text-white">
             Configure {agent.name}
@@ -93,9 +92,7 @@ export function AgentConfigModal({
         <form onSubmit={handleSave} className="p-5 space-y-4">
           {/* Provider Selection */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300">
-              Primary LLM Provider
-            </label>
+            <label className="text-xs font-semibold text-slate-300">Primary LLM Provider</label>
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
@@ -108,7 +105,9 @@ export function AgentConfigModal({
               >
                 <div className="flex items-center justify-between mb-1">
                   <Server className="w-3.5 h-3.5 text-emerald-400" />
-                  {provider === 'ollama' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                  {provider === 'ollama' && (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  )}
                 </div>
                 <div className="text-xs font-bold text-slate-200">Ollama (Local)</div>
                 <div className="text-[10px] text-emerald-400 font-mono">$0.00 / token</div>
@@ -192,7 +191,9 @@ export function AgentConfigModal({
           </div>
 
           <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-slate-400">
-            💡 <span className="font-semibold text-slate-300">Cost Optimization Principle:</span> Assign zero-cost local Ollama models to exploratory analysis and high-performance hosted models (Groq) to Architecture & Security reviews.
+            💡 <span className="font-semibold text-slate-300">Cost Optimization Principle:</span>{' '}
+            Assign zero-cost local Ollama models to exploratory analysis and high-performance hosted
+            models (Groq) to Architecture & Security reviews.
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">

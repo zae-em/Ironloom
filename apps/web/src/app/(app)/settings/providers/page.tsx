@@ -2,14 +2,29 @@
 
 import * as React from 'react';
 import { useAuth } from '../../../../components/providers/auth-provider';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '../../../../components/ui/card';
 import { Button } from '../../../../components/ui/button';
 import { Badge } from '../../../../components/ui/badge';
 import { Input } from '../../../../components/ui/input';
 import { apiClient } from '../../../../lib/api-client';
 import { ProviderSettings, AiProviderName } from '@ironloom/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Cpu, CheckCircle2, AlertCircle, Key, Activity, ArrowUpDown, RefreshCw } from 'lucide-react';
+import {
+  Cpu,
+  CheckCircle2,
+  AlertCircle,
+  Key,
+  Activity,
+  ArrowUpDown,
+  RefreshCw,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ProviderSettingsPage() {
@@ -23,7 +38,8 @@ export default function ProviderSettingsPage() {
   // 1. Fetch Org Provider Settings
   const { data: settings, isLoading: isSettingsLoading } = useQuery<ProviderSettings>({
     queryKey: ['provider-settings', activeOrg?.id],
-    queryFn: () => apiClient.get(`/organizations/${activeOrg?.id}/provider-settings`, { orgId: activeOrg?.id }),
+    queryFn: () =>
+      apiClient.get(`/organizations/${activeOrg?.id}/provider-settings`, { orgId: activeOrg?.id }),
     enabled: Boolean(activeOrg?.id),
   });
 
@@ -34,7 +50,11 @@ export default function ProviderSettingsPage() {
   }, [settings]);
 
   // 2. Live Health Check from AI Gateway
-  const { data: healthData, refetch: refetchHealth, isFetching: isCheckingHealth } = useQuery<{
+  const {
+    data: healthData,
+    refetch: refetchHealth,
+    isFetching: isCheckingHealth,
+  } = useQuery<{
     status: string;
     providers: Record<string, boolean>;
   }>({
@@ -45,7 +65,16 @@ export default function ProviderSettingsPage() {
 
   // 3. Live Redis Quota Status from AI Gateway
   const { data: quotaData, refetch: refetchQuotas } = useQuery<{
-    quotas: Record<string, { provider: string; isAvailable: boolean; remainingRPM: number; remainingTPM: number; estimatedResetMs: number }>;
+    quotas: Record<
+      string,
+      {
+        provider: string;
+        isAvailable: boolean;
+        remainingRPM: number;
+        remainingTPM: number;
+        estimatedResetMs: number;
+      }
+    >;
   }>({
     queryKey: ['gateway-quotas'],
     queryFn: () => apiClient.get('/gateway/quotas'),
@@ -85,9 +114,12 @@ export default function ProviderSettingsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">AI Gateway & LLM Providers</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            AI Gateway & LLM Providers
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Configure zero-licensing-cost local LLMs (Ollama) and free-tier hosted providers (Groq) with automatic failover.
+            Configure zero-licensing-cost local LLMs (Ollama) and free-tier hosted providers (Groq)
+            with automatic failover.
           </p>
         </div>
 
@@ -138,7 +170,9 @@ export default function ProviderSettingsPage() {
           <CardContent className="space-y-3 text-xs">
             <div className="flex items-center justify-between py-1 border-b border-border/50 text-muted-foreground">
               <span>Endpoint:</span>
-              <span className="font-mono text-foreground">{settings?.ollamaBaseUrl || 'http://localhost:11434'}</span>
+              <span className="font-mono text-foreground">
+                {settings?.ollamaBaseUrl || 'http://localhost:11434'}
+              </span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-border/50 text-muted-foreground">
               <span>Default Model:</span>
@@ -209,7 +243,8 @@ export default function ProviderSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Activity className="h-4 w-4 text-primary" /> Real-Time Rate Limits & Quotas (Redis-Backed)
+            <Activity className="h-4 w-4 text-primary" /> Real-Time Rate Limits & Quotas
+            (Redis-Backed)
           </CardTitle>
           <CardDescription className="text-xs">
             Pre-emptive quota awareness routes agent requests away before a 429 occurs.
@@ -262,7 +297,8 @@ export default function ProviderSettingsPage() {
               <Key className="h-4 w-4 text-primary" /> Provider Routing & API Key Settings
             </CardTitle>
             <CardDescription className="text-xs">
-              Configure primary execution provider and save encrypted API keys for this organization.
+              Configure primary execution provider and save encrypted API keys for this
+              organization.
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSaveSettings}>

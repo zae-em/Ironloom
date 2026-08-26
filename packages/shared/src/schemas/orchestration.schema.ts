@@ -15,11 +15,7 @@ export const WorkflowRunStatusSchema = z.enum([
 ]);
 export type WorkflowRunStatus = z.infer<typeof WorkflowRunStatusSchema>;
 
-export const ApprovalStatusSchema = z.enum([
-  'pending',
-  'approved',
-  'rejected',
-]);
+export const ApprovalStatusSchema = z.enum(['pending', 'approved', 'rejected']);
 export type ApprovalStatus = z.infer<typeof ApprovalStatusSchema>;
 
 export const WorkflowNodeNameSchema = z.enum([

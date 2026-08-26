@@ -19,10 +19,16 @@ export class SupabaseService {
 
   private initClients() {
     const url = this.configService.get<string>('supabase.url', 'http://localhost:54321');
-    const serviceKey = this.configService.get<string>('supabase.serviceRoleKey', 'dummy_service_key');
+    const serviceKey = this.configService.get<string>(
+      'supabase.serviceRoleKey',
+      'dummy_service_key',
+    );
     const dbUrl = this.configService.get<string>('supabase.databaseUrl');
 
-    if (process.env.AI_DEFAULT_PROVIDER === 'mock' || this.configService.get('aiGateway.defaultProvider') === 'mock') {
+    if (
+      process.env.AI_DEFAULT_PROVIDER === 'mock' ||
+      this.configService.get('aiGateway.defaultProvider') === 'mock'
+    ) {
       this.isServerOnline = false;
       this.lastCheckedTime = Date.now() + 10000000;
     }

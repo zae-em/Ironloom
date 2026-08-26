@@ -34,7 +34,10 @@ export class PromptTemplateService {
     const version = params.version || 'v1';
 
     // 1. Load base system prompt
-    const baseSystem = this.loadTemplate(`system/base.${version}.md`, '# IRONLOOM OS BASE DIRECTIVE');
+    const baseSystem = this.loadTemplate(
+      `system/base.${version}.md`,
+      '# IRONLOOM OS BASE DIRECTIVE',
+    );
 
     // 2. Load role specific system prompt
     const rolePrompt = this.loadTemplate(
@@ -82,7 +85,9 @@ export class PromptTemplateService {
         return fs.readFileSync(fullPath, 'utf8');
       }
     } catch (err: any) {
-      this.logger.debug(`Template file ${relativePath} not found on disk, using fallback: ${err.message}`);
+      this.logger.debug(
+        `Template file ${relativePath} not found on disk, using fallback: ${err.message}`,
+      );
     }
     return fallbackContent;
   }
@@ -104,7 +109,8 @@ export class PromptTemplateService {
     let result = template;
     for (const [key, value] of Object.entries(context)) {
       const placeholder = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
-      const replacement = typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value ?? '');
+      const replacement =
+        typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value ?? '');
       result = result.replace(placeholder, replacement);
     }
     // Clean up any remaining unreplaced placeholders

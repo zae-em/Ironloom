@@ -1,14 +1,17 @@
 # TASK: System Architecture & Data Model Design (v1)
 
 ## Context:
+
 - Project Name: {{projectName}}
 - Approved Epics & Stories:
-{{requirementsSummary}}
+  {{requirementsSummary}}
 
 ## Retrieved Prior Knowledge & Reference Context (RAG):
+
 {{ragContext}}
 
 ## Instructions:
+
 Synthesize the approved requirements into a coherent, scalable system architecture proposal.
 Define modular components, tech choices with trade-off justifications, a data model with entity fields and relationships, and a valid Mermaid graph specification (`graph TD` or `erDiagram`).
 You MUST output ONLY a valid JSON object matching the following schema:
@@ -40,9 +43,7 @@ You MUST output ONLY a valid JSON object matching the following schema:
         "description": "Domain purpose"
       }
     ],
-    "relationships": [
-      "EntityA 1 -> N EntityB"
-    ]
+    "relationships": ["EntityA 1 -> N EntityB"]
   },
   "diagramMermaid": "graph TD\n  Client[Web Client] --> API[API Gateway]\n  API --> DB[(PostgreSQL)]"
 }

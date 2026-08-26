@@ -52,8 +52,17 @@ describe('Orchestration Graph Engine & Rejection Routing Unit Tests', () => {
                 fallbackProviders: [],
                 maxRetries: 1,
                 retryDelayMs: 10,
-                ollama: { baseUrl: 'http://localhost:11434', defaultModel: 'llama3.1', timeoutMs: 1000 },
-                groq: { apiKey: 'mock_key', baseUrl: 'https://api.groq.com', defaultModel: 'llama-3.3-70b-versatile', timeoutMs: 1000 },
+                ollama: {
+                  baseUrl: 'http://localhost:11434',
+                  defaultModel: 'llama3.1',
+                  timeoutMs: 1000,
+                },
+                groq: {
+                  apiKey: 'mock_key',
+                  baseUrl: 'https://api.groq.com',
+                  defaultModel: 'llama-3.3-70b-versatile',
+                  timeoutMs: 1000,
+                },
               },
               supabase: { url: 'http://localhost:54321', serviceRoleKey: 'test_key' },
             }),
@@ -95,14 +104,10 @@ describe('Orchestration Graph Engine & Rejection Routing Unit Tests', () => {
     projectsService = module.get<ProjectsService>(ProjectsService);
     repo = module.get<OrchestrationRepository>(OrchestrationRepository);
 
-    const project = await projectsService.createProject(
-      ORG_ALPHA,
-      ACTOR_ALICE,
-      {
-        name: 'Graph Test Project',
-        description: 'Orchestration state machine verification',
-      },
-    );
+    const project = await projectsService.createProject(ORG_ALPHA, ACTOR_ALICE, {
+      name: 'Graph Test Project',
+      description: 'Orchestration state machine verification',
+    });
     testProjectId = project.id;
   });
 
@@ -137,7 +142,8 @@ describe('Orchestration Graph Engine & Rejection Routing Unit Tests', () => {
     const pendingApproval = approvals.find((a) => a.status === 'pending');
     expect(pendingApproval).toBeDefined();
 
-    const reviewerFeedback = 'Please emphasize battery consumption and hardware weight constraints in the problem statement.';
+    const reviewerFeedback =
+      'Please emphasize battery consumption and hardware weight constraints in the problem statement.';
 
     const result = await orchestrationService.decideApproval({
       approvalId: pendingApproval!.id,
@@ -184,7 +190,9 @@ describe('Orchestration Graph Engine & Rejection Routing Unit Tests', () => {
 
     // Verify approval request for epics is created
     const latestApprovals = await orchestrationService.listApprovalRequests(testProjectId);
-    const epicsApproval = latestApprovals.find((a) => a.nodeName === 'gate_epics' && a.status === 'pending');
+    const epicsApproval = latestApprovals.find(
+      (a) => a.nodeName === 'gate_epics' && a.status === 'pending',
+    );
     expect(epicsApproval).toBeDefined();
   });
 });

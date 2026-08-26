@@ -19,7 +19,11 @@ export class SlidingWindowRateLimiterGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
 
-    const ip = request.ip || request.headers['x-forwarded-for'] || request.socket?.remoteAddress || '127.0.0.1';
+    const ip =
+      request.ip ||
+      request.headers['x-forwarded-for'] ||
+      request.socket?.remoteAddress ||
+      '127.0.0.1';
     const userId = request.user?.userId;
     const clientIdentifier = userId ? `user:${userId}` : `ip:${ip}`;
     const route = request.route?.path || request.url;
@@ -35,7 +39,10 @@ export class SlidingWindowRateLimiterGuard implements CanActivate {
     if (response && response.setHeader) {
       response.setHeader('X-RateLimit-Limit', limit.toString());
       response.setHeader('X-RateLimit-Remaining', remaining.toString());
-      response.setHeader('X-RateLimit-Reset', Math.ceil(Date.now() / 1000 + resetMs / 1000).toString());
+      response.setHeader(
+        'X-RateLimit-Reset',
+        Math.ceil(Date.now() / 1000 + resetMs / 1000).toString(),
+      );
     }
 
     if (count > limit) {

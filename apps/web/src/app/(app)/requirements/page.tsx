@@ -23,7 +23,10 @@ import { toast } from 'sonner';
 import { IdeaSubmissionModal } from '@/components/sdlc/idea-submission-modal';
 import { BusinessCaseView } from '@/components/sdlc/business-case-view';
 import { RequirementTree, Epic, UserStory } from '@/components/sdlc/requirement-tree';
-import { ArchitectureProposalView, ArchitectureProposal } from '@/components/sdlc/architecture-proposal-view';
+import {
+  ArchitectureProposalView,
+  ArchitectureProposal,
+} from '@/components/sdlc/architecture-proposal-view';
 import { TraceabilityDrawer } from '@/components/sdlc/traceability-drawer';
 
 export default function RequirementsPage() {
@@ -53,7 +56,9 @@ export default function RequirementsPage() {
         apiClient.get<any[]>(`/projects/${activeProjId}/sdlc/business-cases`).catch(() => []),
         apiClient.get<Epic[]>(`/projects/${activeProjId}/sdlc/epics`).catch(() => []),
         apiClient.get<UserStory[]>(`/projects/${activeProjId}/sdlc/user-stories`).catch(() => []),
-        apiClient.get<ArchitectureProposal[]>(`/projects/${activeProjId}/sdlc/architecture-proposals`).catch(() => []),
+        apiClient
+          .get<ArchitectureProposal[]>(`/projects/${activeProjId}/sdlc/architecture-proposals`)
+          .catch(() => []),
       ]);
 
       setBusinessCases(bcList);
@@ -98,7 +103,8 @@ export default function RequirementsPage() {
             </Badge>
           </div>
           <p className="mt-1 text-xs text-slate-400">
-            Autonomous Business Analyst, Product Manager, Requirements Engineer & System Architect pipeline with human approval gates.
+            Autonomous Business Analyst, Product Manager, Requirements Engineer & System Architect
+            pipeline with human approval gates.
           </p>
         </div>
 
@@ -187,9 +193,7 @@ export default function RequirementsPage() {
           <BusinessCaseView
             businessCase={currentBusinessCase}
             onUpdate={(updated) => {
-              setBusinessCases(
-                businessCases.map((bc) => (bc.id === updated.id ? updated : bc)),
-              );
+              setBusinessCases(businessCases.map((bc) => (bc.id === updated.id ? updated : bc)));
             }}
             onEpicsGenerated={() => {
               loadSdlcData();
@@ -202,7 +206,8 @@ export default function RequirementsPage() {
             <FileText className="w-10 h-10 text-slate-600 mx-auto" />
             <h3 className="text-sm font-bold text-slate-200">No Business Case Formulated Yet</h3>
             <p className="text-xs text-slate-400 max-w-sm mx-auto">
-              Submit a raw software idea to trigger the Business Analyst Agent and synthesize your business case.
+              Submit a raw software idea to trigger the Business Analyst Agent and synthesize your
+              business case.
             </p>
             <Button
               onClick={() => setIsIdeaModalOpen(true)}

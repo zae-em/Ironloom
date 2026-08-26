@@ -24,12 +24,7 @@ import { RedisService } from '../src/redis/redis.service';
 import { MockAdapter } from '../src/ai-gateway/adapters/mock.adapter';
 import { OllamaAdapter } from '../src/ai-gateway/adapters/ollama.adapter';
 import { GroqAdapter } from '../src/ai-gateway/adapters/groq.adapter';
-import {
-  ArchitectureProposal,
-  BusinessCase,
-  Epic,
-  UserStory,
-} from '@ironloom/shared';
+import { ArchitectureProposal, BusinessCase, Epic, UserStory } from '@ironloom/shared';
 
 describe('SDLC Full Pipeline & Bi-Directional Traceability Integration Tests', () => {
   let sdlcService: SdlcService;
@@ -39,7 +34,8 @@ describe('SDLC Full Pipeline & Bi-Directional Traceability Integration Tests', (
   const ACTOR_ALICE = '11111111-1111-1111-1111-111111111111';
   let testProjectId: string;
 
-  const rawIdea = 'Build a high-reliability drone collision avoidance system that alerts operators in under 100ms.';
+  const rawIdea =
+    'Build a high-reliability drone collision avoidance system that alerts operators in under 100ms.';
   let businessCase: BusinessCase;
   let primaryEpic: Epic;
   let primaryStory: UserStory;
@@ -57,8 +53,17 @@ describe('SDLC Full Pipeline & Bi-Directional Traceability Integration Tests', (
                 fallbackProviders: [],
                 maxRetries: 1,
                 retryDelayMs: 10,
-                ollama: { baseUrl: 'http://localhost:11434', defaultModel: 'llama3.1', timeoutMs: 1000 },
-                groq: { apiKey: 'mock_key', baseUrl: 'https://api.groq.com', defaultModel: 'llama-3.3-70b-versatile', timeoutMs: 1000 },
+                ollama: {
+                  baseUrl: 'http://localhost:11434',
+                  defaultModel: 'llama3.1',
+                  timeoutMs: 1000,
+                },
+                groq: {
+                  apiKey: 'mock_key',
+                  baseUrl: 'https://api.groq.com',
+                  defaultModel: 'llama-3.3-70b-versatile',
+                  timeoutMs: 1000,
+                },
               },
               supabase: { url: 'http://localhost:54321', serviceRoleKey: 'test_key' },
             }),
@@ -118,7 +123,11 @@ describe('SDLC Full Pipeline & Bi-Directional Traceability Integration Tests', (
   }, 60000);
 
   it('Step 2: Human Approves BusinessCase -> PM Agent generates Epics Backlog', async () => {
-    const approvedCase = await sdlcService.updateBusinessCaseStatus(businessCase.id, 'approved', ORG_ALPHA);
+    const approvedCase = await sdlcService.updateBusinessCaseStatus(
+      businessCase.id,
+      'approved',
+      ORG_ALPHA,
+    );
     expect(approvedCase.status).toBe('approved');
 
     const epics = await sdlcService.generateEpicsFromBusinessCase({
@@ -157,7 +166,11 @@ describe('SDLC Full Pipeline & Bi-Directional Traceability Integration Tests', (
   }, 60000);
 
   it('Step 4a: Human Approves User Story (Auto-Ingests into RAG Knowledge Store)', async () => {
-    const updatedStory = await sdlcService.updateUserStoryStatus(primaryStory.id, 'approved', ORG_ALPHA);
+    const updatedStory = await sdlcService.updateUserStoryStatus(
+      primaryStory.id,
+      'approved',
+      ORG_ALPHA,
+    );
     expect(updatedStory.status).toBe('approved');
   }, 60000);
 

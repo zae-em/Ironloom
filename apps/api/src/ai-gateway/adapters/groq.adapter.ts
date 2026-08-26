@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { AiGatewayRequest, AiProviderName, TokenUsage } from '@ironloom/shared';
 import {
-  AiGatewayRequest,
-  AiProviderName,
-  TokenUsage,
-} from '@ironloom/shared';
-import { IProviderAdapter, ProviderCompletionResult } from '../interfaces/provider-adapter.interface';
+  IProviderAdapter,
+  ProviderCompletionResult,
+} from '../interfaces/provider-adapter.interface';
 import { CostCalculatorService } from '../cost/cost-calculator.service';
 
 @Injectable()
@@ -19,19 +18,30 @@ export class GroqAdapter implements IProviderAdapter {
     private readonly costCalculator: CostCalculatorService,
   ) {}
 
-  async complete(request: AiGatewayRequest, overrideModel?: string): Promise<ProviderCompletionResult> {
-    const apiKey = this.configService.get<string>('aiGateway.groq.apiKey') || process.env.GROQ_API_KEY;
-    const baseUrl = this.configService.get<string>('aiGateway.groq.baseUrl', 'https://api.groq.com/openai/v1');
-    const defaultModel = this.configService.get<string>('aiGateway.groq.defaultModel', 'qwen/qwen3.8-27b');
+  async complete(
+    request: AiGatewayRequest,
+    overrideModel?: string,
+  ): Promise<ProviderCompletionResult> {
+    const apiKey =
+      this.configService.get<string>('aiGateway.groq.apiKey') || process.env.GROQ_API_KEY;
+    const baseUrl = this.configService.get<string>(
+      'aiGateway.groq.baseUrl',
+      'https://api.groq.com/openai/v1',
+    );
+    const defaultModel = this.configService.get<string>(
+      'aiGateway.groq.defaultModel',
+      'qwen/qwen3.8-27b',
+    );
     const timeoutMs = this.configService.get<number>('aiGateway.groq.timeoutMs', 30000);
     const model = overrideModel || request.model || defaultModel;
 
     const startTime = Date.now();
 
     // Prepare messages payload in OpenAI chat format
-    const messages = request.messages && request.messages.length > 0
-      ? request.messages.map((m) => ({ role: m.role, content: m.content }))
-      : [{ role: 'user', content: request.prompt || '' }];
+    const messages =
+      request.messages && request.messages.length > 0
+        ? request.messages.map((m) => ({ role: m.role, content: m.content }))
+        : [{ role: 'user', content: request.prompt || '' }];
 
     // If apiKey is mock/unconfigured and running in mock environment, generate simulated Groq response
     if (!apiKey || apiKey === 'mock_groq_api_key' || apiKey.startsWith('mock_')) {
@@ -100,8 +110,11 @@ export class GroqAdapter implements IProviderAdapter {
     } catch (error: any) {
       const latencyMs = Date.now() - startTime;
       const status = error.response?.status;
-      const errorMessage = error.response?.data?.error?.message || error.message || 'Groq request failed';
-      this.logger.warn(`Groq request failed (${status || 'network'}) after ${latencyMs}ms: ${errorMessage}`);
+      const errorMessage =
+        error.response?.data?.error?.message || error.message || 'Groq request failed';
+      this.logger.warn(
+        `Groq request failed (${status || 'network'}) after ${latencyMs}ms: ${errorMessage}`,
+      );
       throw new Error(`[Groq ${status || 'ERR'}] ${errorMessage}`);
     }
   }

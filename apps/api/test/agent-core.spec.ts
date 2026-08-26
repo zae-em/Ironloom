@@ -47,7 +47,9 @@ describe('Agent Framework Skeleton Unit Tests', () => {
     });
 
     expect(result.success).toBe(true);
-    expect(result.result?.echo).toBe('TEST: Hello Agent Framework | Hello Agent Framework | Hello Agent Framework');
+    expect(result.result?.echo).toBe(
+      'TEST: Hello Agent Framework | Hello Agent Framework | Hello Agent Framework',
+    );
     expect(result.result?.count).toBe(3);
   });
 

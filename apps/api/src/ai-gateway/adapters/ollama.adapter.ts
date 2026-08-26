@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { AiGatewayRequest, AiProviderName, TokenUsage } from '@ironloom/shared';
 import {
-  AiGatewayRequest,
-  AiProviderName,
-  TokenUsage,
-} from '@ironloom/shared';
-import { IProviderAdapter, ProviderCompletionResult } from '../interfaces/provider-adapter.interface';
+  IProviderAdapter,
+  ProviderCompletionResult,
+} from '../interfaces/provider-adapter.interface';
 import { CostCalculatorService } from '../cost/cost-calculator.service';
 
 @Injectable()
@@ -19,18 +18,28 @@ export class OllamaAdapter implements IProviderAdapter {
     private readonly costCalculator: CostCalculatorService,
   ) {}
 
-  async complete(request: AiGatewayRequest, overrideModel?: string): Promise<ProviderCompletionResult> {
-    const baseUrl = this.configService.get<string>('aiGateway.ollama.baseUrl', 'http://localhost:11434');
-    const defaultModel = this.configService.get<string>('aiGateway.ollama.defaultModel', 'llama3.1');
+  async complete(
+    request: AiGatewayRequest,
+    overrideModel?: string,
+  ): Promise<ProviderCompletionResult> {
+    const baseUrl = this.configService.get<string>(
+      'aiGateway.ollama.baseUrl',
+      'http://localhost:11434',
+    );
+    const defaultModel = this.configService.get<string>(
+      'aiGateway.ollama.defaultModel',
+      'llama3.1',
+    );
     const timeoutMs = this.configService.get<number>('aiGateway.ollama.timeoutMs', 2000);
     const model = overrideModel || request.model || defaultModel;
 
     const startTime = Date.now();
 
     // Prepare messages array for /api/chat
-    const messages = request.messages && request.messages.length > 0
-      ? request.messages.map((m) => ({ role: m.role, content: m.content }))
-      : [{ role: 'user', content: request.prompt || '' }];
+    const messages =
+      request.messages && request.messages.length > 0
+        ? request.messages.map((m) => ({ role: m.role, content: m.content }))
+        : [{ role: 'user', content: request.prompt || '' }];
 
     try {
       this.logger.debug(`Dispatching prompt to Ollama at ${baseUrl} with model ${model}`);
@@ -87,7 +96,10 @@ export class OllamaAdapter implements IProviderAdapter {
   }
 
   async isHealthy(): Promise<boolean> {
-    const baseUrl = this.configService.get<string>('aiGateway.ollama.baseUrl', 'http://localhost:11434');
+    const baseUrl = this.configService.get<string>(
+      'aiGateway.ollama.baseUrl',
+      'http://localhost:11434',
+    );
     try {
       const res = await axios.get(`${baseUrl}/api/tags`, { timeout: 3000 });
       return res.status === 200;

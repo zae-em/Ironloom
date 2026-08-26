@@ -19,7 +19,9 @@ export default function TasksPage() {
       const projects = await apiClient.get<any[]>('/projects').catch(() => []);
       const activeProjId = projects[0]?.id || '00000000-0000-0000-0000-000000000001';
 
-      const stories = await apiClient.get<any[]>(`/projects/${activeProjId}/sdlc/user-stories`).catch(() => []);
+      const stories = await apiClient
+        .get<any[]>(`/projects/${activeProjId}/sdlc/user-stories`)
+        .catch(() => []);
 
       if (stories && stories.length > 0) {
         const mappedTasks: KanbanTask[] = stories.map((s, idx) => {
@@ -64,7 +66,8 @@ export default function TasksPage() {
             </Badge>
           </div>
           <p className="mt-1 text-xs text-slate-400">
-            Sprint board automatically populated from approved user stories with manual status overrides.
+            Sprint board automatically populated from approved user stories with manual status
+            overrides.
           </p>
         </div>
 

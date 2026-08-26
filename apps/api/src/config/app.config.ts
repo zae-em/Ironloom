@@ -49,7 +49,8 @@ export const loadConfig = (): AppConfig => ({
     url: process.env.SUPABASE_URL || 'http://localhost:54321',
     anonKey: process.env.SUPABASE_ANON_KEY || 'dummy_anon_key',
     serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy_service_role_key',
-    databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:54322/postgres',
+    databaseUrl:
+      process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:54322/postgres',
   },
   aiGateway: {
     defaultProvider: process.env.GATEWAY_DEFAULT_PROVIDER || 'ollama',

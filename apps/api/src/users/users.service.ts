@@ -14,11 +14,7 @@ export class UsersService {
 
     try {
       // 1. Get user profile
-      const { data: userRecord } = await admin
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      const { data: userRecord } = await admin.from('users').select('*').eq('id', userId).single();
 
       // 2. Get user organizations
       const { data: members } = await admin

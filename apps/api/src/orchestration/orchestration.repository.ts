@@ -74,11 +74,7 @@ export class OrchestrationRepository {
     if (this.supabaseService.isServerAvailable()) {
       const admin = this.supabaseService.getAdminClient();
       try {
-        const { data, error } = await admin
-          .from('workflow_runs')
-          .select('*')
-          .eq('id', id)
-          .single();
+        const { data, error } = await admin.from('workflow_runs').select('*').eq('id', id).single();
 
         if (!error && data) {
           return {

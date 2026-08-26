@@ -49,11 +49,16 @@ export class ArchitectAgent extends BaseAgent {
     provider: string;
     retrievedContextCount: number;
   }> {
-    this.logger.log(`Designing System Architecture Proposal for project "${params.projectName}" (${params.projectId})`);
+    this.logger.log(
+      `Designing System Architecture Proposal for project "${params.projectName}" (${params.projectId})`,
+    );
 
     // 1. Summarize requirements context
     const requirementsSummary = params.stories
-      .map((s, idx) => `Story ${idx + 1}: ${s.title}\nAs a: ${s.asA}, I want: ${s.iWant}, So that: ${s.soThat}`)
+      .map(
+        (s, idx) =>
+          `Story ${idx + 1}: ${s.title}\nAs a: ${s.asA}, I want: ${s.iWant}, So that: ${s.soThat}`,
+      )
       .join('\n\n');
 
     // 2. RAG Retrieval for past architecture proposals, ADRs and tech standards
@@ -138,13 +143,15 @@ export class ArchitectAgent extends BaseAgent {
     } catch {
       return schema.parse({
         title: 'Modular Event-Driven Architecture Proposal',
-        summary: 'Microservice-oriented topology with Redis pub/sub ingestion and PostgreSQL transactional storage.',
+        summary:
+          'Microservice-oriented topology with Redis pub/sub ingestion and PostgreSQL transactional storage.',
         components: [
           {
             name: 'Telemetry Ingestion Gateway',
             description: 'High-throughput stream consumer for sensor packets.',
             techChoice: 'Node.js / Express with sliding-window rate limiter',
-            justification: 'Low latency I/O with Redis counters for sub-millisecond throttle tracking.',
+            justification:
+              'Low latency I/O with Redis counters for sub-millisecond throttle tracking.',
           },
           {
             name: 'Autonomous Path Planner',
@@ -154,9 +161,21 @@ export class ArchitectAgent extends BaseAgent {
           },
         ],
         techStack: [
-          { category: 'Runtime', technology: 'Node.js 20+ TypeScript', justification: 'Unified monorepo stack' },
-          { category: 'Database', technology: 'PostgreSQL 16 + pgvector', justification: 'ACID guarantees + vector RAG' },
-          { category: 'Cache', technology: 'Redis 7', justification: 'Sub-ms rate limiting & queue buffering' },
+          {
+            category: 'Runtime',
+            technology: 'Node.js 20+ TypeScript',
+            justification: 'Unified monorepo stack',
+          },
+          {
+            category: 'Database',
+            technology: 'PostgreSQL 16 + pgvector',
+            justification: 'ACID guarantees + vector RAG',
+          },
+          {
+            category: 'Cache',
+            technology: 'Redis 7',
+            justification: 'Sub-ms rate limiting & queue buffering',
+          },
         ],
         dataModel: {
           entities: [
@@ -173,7 +192,8 @@ export class ArchitectAgent extends BaseAgent {
           ],
           relationships: ['Device 1 -> N TelemetryPacket', 'Project 1 -> N TrajectoryPlan'],
         },
-        diagramMermaid: 'graph TD\n  Sensors[Drone Sensors] --> Gateway[Ingestion Gateway]\n  Gateway --> Redis[(Redis Queue)]\n  Redis --> Planner[Path Planner]\n  Planner --> DB[(PostgreSQL + pgvector)]',
+        diagramMermaid:
+          'graph TD\n  Sensors[Drone Sensors] --> Gateway[Ingestion Gateway]\n  Gateway --> Redis[(Redis Queue)]\n  Redis --> Planner[Path Planner]\n  Planner --> DB[(PostgreSQL + pgvector)]',
       });
     }
   }

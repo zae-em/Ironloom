@@ -39,13 +39,16 @@ export default function DashboardPage() {
       setIsLoading(true);
       try {
         const projects = await apiClient.get<any[]>('/projects').catch(() => []);
-        const activeProjId = projects[0]?.id || activeProject?.id || '00000000-0000-0000-0000-000000000001';
+        const activeProjId =
+          projects[0]?.id || activeProject?.id || '00000000-0000-0000-0000-000000000001';
 
         const [bcList, epicsList, storiesList, archList, logsList] = await Promise.all([
           apiClient.get<any[]>(`/projects/${activeProjId}/sdlc/business-cases`).catch(() => []),
           apiClient.get<any[]>(`/projects/${activeProjId}/sdlc/epics`).catch(() => []),
           apiClient.get<any[]>(`/projects/${activeProjId}/sdlc/user-stories`).catch(() => []),
-          apiClient.get<any[]>(`/projects/${activeProjId}/sdlc/architecture-proposals`).catch(() => []),
+          apiClient
+            .get<any[]>(`/projects/${activeProjId}/sdlc/architecture-proposals`)
+            .catch(() => []),
           apiClient.get<any[]>(`/projects/${activeProjId}/sdlc/audit-logs`).catch(() => []),
         ]);
 
@@ -78,8 +81,8 @@ export default function DashboardPage() {
     epics.length > 0
       ? Math.round((epicsWithApprovedStories / epics.length) * 100)
       : businessCases.length > 0
-      ? 50
-      : 0;
+        ? 50
+        : 0;
 
   const totalCost = recentLogs.reduce((acc, log) => acc + (Number(log.cost_usd) || 0), 0);
 
@@ -97,13 +100,17 @@ export default function DashboardPage() {
             </Badge>
           </div>
           <p className="mt-1 text-xs text-slate-400">
-            {activeProject?.description || 'Collaborating AI software engineering operating system with multi-agent consensus and human approval gates.'}
+            {activeProject?.description ||
+              'Collaborating AI software engineering operating system with multi-agent consensus and human approval gates.'}
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
           <Link href="/requirements">
-            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium shadow-lg shadow-indigo-600/20">
+            <Button
+              size="sm"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium shadow-lg shadow-indigo-600/20"
+            >
               <Sparkles className="w-3.5 h-3.5 mr-1.5" />
               Open Requirements Workspace
             </Button>
@@ -120,7 +127,8 @@ export default function DashboardPage() {
             <Layers className="w-4 h-4 text-indigo-400" />
           </div>
           <div className="text-2xl font-bold text-white font-mono">
-            {userStories.length} <span className="text-xs font-normal text-slate-400 font-sans">User Stories</span>
+            {userStories.length}{' '}
+            <span className="text-xs font-normal text-slate-400 font-sans">User Stories</span>
           </div>
           <div className="flex items-center gap-2 text-[11px] font-mono">
             <span className="text-emerald-400">{approvedStoriesCount} Approved</span> •{' '}
@@ -163,9 +171,7 @@ export default function DashboardPage() {
             <span>Agent Cost Accounting</span>
             <Coins className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="text-2xl font-bold text-white font-mono">
-            ${totalCost.toFixed(5)}
-          </div>
+          <div className="text-2xl font-bold text-white font-mono">${totalCost.toFixed(5)}</div>
           <div className="text-[11px] text-emerald-400 font-mono">
             Local Ollama $0.00 / token primary
           </div>
@@ -189,7 +195,11 @@ export default function DashboardPage() {
               </div>
 
               <Link href="/requirements">
-                <Button variant="ghost" size="sm" className="text-xs text-indigo-400 hover:text-indigo-300">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-indigo-400 hover:text-indigo-300"
+                >
                   View Tree <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
                 </Button>
               </Link>
@@ -200,7 +210,10 @@ export default function DashboardPage() {
                 <div className="p-6 text-center rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                   <p className="text-xs text-slate-400">No epics generated yet.</p>
                   <Link href="/requirements">
-                    <Button size="sm" className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs">
+                    <Button
+                      size="sm"
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs"
+                    >
                       Submit Idea to BA Agent
                     </Button>
                   </Link>
@@ -213,7 +226,9 @@ export default function DashboardPage() {
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-mono text-indigo-400 font-bold">EPIC-{idx + 1}</span>
+                        <span className="text-[11px] font-mono text-indigo-400 font-bold">
+                          EPIC-{idx + 1}
+                        </span>
                         <h4 className="text-xs font-bold text-white">{epic.title}</h4>
                       </div>
                       <p className="text-[11px] text-slate-400 line-clamp-1">{epic.description}</p>
@@ -249,7 +264,11 @@ export default function DashboardPage() {
               </div>
 
               <Link href="/agents">
-                <Button variant="ghost" size="sm" className="text-xs text-slate-400 hover:text-white">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-slate-400 hover:text-white"
+                >
                   Roster <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
                 </Button>
               </Link>
@@ -271,13 +290,18 @@ export default function DashboardPage() {
                         {log.actor_id}
                       </span>
                       <span className="text-slate-500 font-mono">
-                        {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(log.created_at).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </span>
                     </div>
                     <div className="text-[11px] text-slate-300 font-mono">{log.action}</div>
                     <div className="flex items-center justify-between pt-1 text-[10px] text-slate-500 font-mono">
                       <span>{log.model || 'llama3.1'}</span>
-                      <span className="text-emerald-400 font-semibold">${Number(log.cost_usd || 0).toFixed(5)}</span>
+                      <span className="text-emerald-400 font-semibold">
+                        ${Number(log.cost_usd || 0).toFixed(5)}
+                      </span>
                     </div>
                   </div>
                 ))

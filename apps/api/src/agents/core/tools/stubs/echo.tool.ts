@@ -19,7 +19,8 @@ export interface EchoToolOutput {
 @Injectable()
 export class EchoTool implements ITool<EchoToolInput, EchoToolOutput> {
   readonly name = 'echo';
-  readonly description = 'A test tool that echoes back input parameters to verify agent tool calling execution pipelines.';
+  readonly description =
+    'A test tool that echoes back input parameters to verify agent tool calling execution pipelines.';
   readonly inputSchema = EchoToolInputSchema;
 
   async execute(input: EchoToolInput): Promise<EchoToolOutput> {

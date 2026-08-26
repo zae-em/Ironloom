@@ -224,11 +224,13 @@ export type RAGSearchResult = z.infer<typeof RAGSearchResultSchema>;
 export const TraceabilityGraphSchema = z.object({
   projectId: z.string().uuid(),
   businessCase: BusinessCaseSchema.optional(),
-  epics: z.array(
-    EpicSchema.extend({
-      userStories: z.array(UserStorySchema).default([]),
-    }),
-  ).default([]),
+  epics: z
+    .array(
+      EpicSchema.extend({
+        userStories: z.array(UserStorySchema).default([]),
+      }),
+    )
+    .default([]),
   architectureProposals: z.array(ArchitectureProposalSchema).default([]),
 });
 export type TraceabilityGraph = z.infer<typeof TraceabilityGraphSchema>;

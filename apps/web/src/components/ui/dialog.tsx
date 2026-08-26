@@ -72,7 +72,9 @@ export function Dialog({
             </button>
 
             <div className="flex flex-col space-y-1.5 text-left mb-5">
-              <h2 className="text-lg font-semibold leading-none tracking-tight text-white">{title}</h2>
+              <h2 className="text-lg font-semibold leading-none tracking-tight text-white">
+                {title}
+              </h2>
               {description && <p className="text-sm text-slate-400">{description}</p>}
             </div>
 
@@ -132,9 +134,7 @@ export function DialogHeader({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn('flex flex-col space-y-1.5 text-left mb-4', className)}>
-      {children}
-    </div>
+    <div className={cn('flex flex-col space-y-1.5 text-left mb-4', className)}>{children}</div>
   );
 }
 
@@ -159,9 +159,5 @@ export function DialogDescription({
   className?: string;
   children: React.ReactNode;
 }) {
-  return (
-    <p className={cn('text-sm text-slate-400', className)}>
-      {children}
-    </p>
-  );
+  return <p className={cn('text-sm text-slate-400', className)}>{children}</p>;
 }
