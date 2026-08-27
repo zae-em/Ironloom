@@ -33,6 +33,7 @@ export function Sidebar() {
   const navItems: NavItem[] = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Workflows', href: '/workflows', icon: GitBranch, badge: 'Live' },
+    { name: 'Engineering', href: '/engineering', icon: GitBranch, badge: 'P4' },
     { name: 'Requirements', href: '/requirements', icon: FileText, badge: 'P4' },
     { name: 'Tasks', href: '/tasks', icon: CheckSquare, badge: 'P6' },
     { name: 'Agents', href: '/agents', icon: Bot, badge: 'P3' },

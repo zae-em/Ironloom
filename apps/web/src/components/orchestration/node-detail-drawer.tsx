@@ -217,6 +217,79 @@ export function NodeDetailDrawer({
             </div>
           </div>
         )}
+
+        {/* Phase 4 Engineering Nodes */}
+        {nodeName === 'dev_node' && state.pullRequests?.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Autonomous Code Implementation (PR #{state.pullRequests[0].prNumber})
+            </h4>
+            <div className="rounded-xl border border-border bg-card p-4 space-y-2 text-xs">
+              <span className="font-bold text-foreground block">{state.pullRequests[0].title}</span>
+              <p className="text-muted-foreground font-mono text-[11px]">
+                Branch: {state.pullRequests[0].branchName}
+              </p>
+              <span className="text-[11px] text-zinc-400 block">
+                Files Changed: {state.pullRequests[0].filesChanged?.length || 1}
+              </span>
+              <a
+                href="/engineering"
+                className="mt-2 inline-flex items-center gap-1 text-primary hover:underline font-semibold text-xs"
+              >
+                Inspect in Code Workspace →
+              </a>
+            </div>
+          </div>
+        )}
+
+        {nodeName === 'code_review_node' && state.codeReviewVerdicts?.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Code Review Verdict
+            </h4>
+            <div className="rounded-xl border border-border bg-card p-4 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-foreground">Verdict:</span>
+                <span className="rounded bg-emerald-500/20 text-emerald-300 font-bold uppercase px-1.5 py-0.2 text-[10px]">
+                  {state.codeReviewVerdicts[0].verdict}
+                </span>
+              </div>
+              <p className="text-muted-foreground">{state.codeReviewVerdicts[0].summary}</p>
+              <span className="text-[11px] text-zinc-400 block">
+                Comments: {state.codeReviewVerdicts[0].comments?.length || 0} items
+              </span>
+            </div>
+          </div>
+        )}
+
+        {nodeName === 'qa_node' && state.testRuns?.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Automated QA Test Results
+            </h4>
+            <div className="rounded-xl border border-border bg-card p-4 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-foreground">Status:</span>
+                <span className="rounded bg-emerald-500/20 text-emerald-300 font-bold uppercase px-1.5 py-0.2 text-[10px]">
+                  {state.testRuns[0].status}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-muted-foreground font-mono text-[11px]">
+                <span>{state.testRuns[0].passedCount} Passed</span>
+                <span>•</span>
+                <span>{state.testRuns[0].coveragePercent}% Coverage</span>
+                <span>•</span>
+                <span>{state.testRuns[0].durationMs}ms</span>
+              </div>
+              <a
+                href="/engineering"
+                className="mt-2 inline-flex items-center gap-1 text-primary hover:underline font-semibold text-xs"
+              >
+                View Full Test Logs →
+              </a>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -109,4 +109,37 @@ test.describe('IRONLOOM OS Core SDLC & Workspace Smoke Tests (Prompts 1–4)', (
     await expect(page.locator('text=Ollama (Local LLM)')).toBeVisible();
     await expect(page.locator('text=Groq (Hosted Free Tier)')).toBeVisible();
   });
+
+  test('should navigate to Autonomous Engineering Hub and inspect PR diff, QA suite, and sandbox telemetry', async ({
+    page,
+  }) => {
+    await page.goto('/login');
+    await page.fill('input[type="email"]', 'alice@alpha.io');
+    await page.fill('input[type="password"]', 'password123');
+    await page.click('button[type="submit"]');
+    await page.waitForURL(/.*dashboard/);
+
+    // Navigate to Engineering Hub
+    await page.goto('/engineering');
+    await expect(page.locator('text=Autonomous Engineering Hub')).toBeVisible();
+    await expect(page.locator('text=Code Workspace & PRs')).toBeVisible();
+    await expect(page.locator('text=Agent-Authored Pull Requests')).toBeVisible();
+
+    // Verify Diff Viewer is rendered with PR details
+    await expect(page.locator('text=PR #101')).toBeVisible();
+    await expect(page.locator('text=Traceability: Implements User Story')).toBeVisible();
+    await expect(page.locator('text=Changed Files')).toBeVisible();
+
+    // Switch to Testing & QA Suite tab
+    await page.click('button:has-text("Testing & QA Suite")');
+    await expect(page.locator('text=Automated QA & Test Execution Suite')).toBeVisible();
+    await expect(page.locator('text=Coverage Trend Over PR Implementations')).toBeVisible();
+    await expect(page.locator('text=Sandbox Test Logs')).toBeVisible();
+
+    // Switch to Sandbox Audit tab
+    await page.click('button:has-text("Sandbox Audit")');
+    await expect(page.locator('text=Zero-Trust Sandbox Execution Audit Log')).toBeVisible();
+    await expect(page.locator('text=Egress Isolated')).toBeVisible();
+    await expect(page.locator('text=Recent Sandbox Tasks')).toBeVisible();
+  });
 });
