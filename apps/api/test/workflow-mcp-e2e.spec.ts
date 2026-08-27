@@ -121,18 +121,33 @@ describe('Workflow & MCP E2E Integration Test Suite', () => {
     expect(run.currentNode).toBe('gate_architecture');
     expect(run.statePayload.architectureProposal).toBeDefined();
 
-    // 5. Approve Gate 4: Architecture -> Automatically executes mcp_sync_node (GitHub, Jira, Slack) -> dev_stub -> qa_stub -> completed!
+    // 5. Approve Gate 4: Architecture -> Automatically executes mcp_sync_node -> dev_node -> code_review_node -> qa_node -> pauses at gate_pr_human_review!
     res = await orchestrationService.decideApproval({
       approvalId: run.statePayload.activeApprovalRequestId!,
       dto: {
         decision: 'approved',
-        notes: 'Final Architecture Approved. Trigger external MCP sync.',
+        notes: 'Final Architecture Approved. Trigger external MCP sync & autonomous dev.',
       },
       actorUserId: testUserId,
     });
     run = res.workflowRun;
 
-    // Workflow must have progressed through mcp_sync_node and reached completion!
+    expect(run.status).toBe('paused_approval');
+    expect(run.currentNode).toBe('gate_pr_human_review');
+    expect(run.statePayload.pullRequests.length).toBeGreaterThan(0);
+
+    // 6. Approve Final Human PR Review Gate -> Marks completed
+    res = await orchestrationService.decideApproval({
+      approvalId: run.statePayload.activeApprovalRequestId!,
+      dto: {
+        decision: 'approved',
+        notes: 'Human verified green CI and approved merge.',
+      },
+      actorUserId: testUserId,
+    });
+    run = res.workflowRun;
+
+    // Workflow must have progressed through full pipeline and reached completion!
     expect(run.status).toBe('completed');
     expect(run.currentNode).toBe('completed');
 

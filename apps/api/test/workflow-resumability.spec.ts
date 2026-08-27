@@ -28,7 +28,11 @@ import { RedisService } from '../src/redis/redis.service';
 import { MockAdapter } from '../src/ai-gateway/adapters/mock.adapter';
 import { OllamaAdapter } from '../src/ai-gateway/adapters/ollama.adapter';
 import { GroqAdapter } from '../src/ai-gateway/adapters/groq.adapter';
+import { DeveloperAgent } from '../src/agents/sdlc/developer.agent';
+import { CodeReviewerAgent } from '../src/agents/sdlc/code-reviewer.agent';
+import { QaAgent } from '../src/agents/sdlc/qa.agent';
 import { McpModule } from '../src/mcp/mcp.module';
+import { SandboxModule } from '../src/sandbox/sandbox.module';
 
 jest.setTimeout(120000);
 
@@ -70,6 +74,7 @@ describe('Workflow Resumability & State Persistence Integration Tests', () => {
           ],
         }),
         McpModule,
+        SandboxModule,
       ],
       providers: [
         OrchestrationService,
@@ -83,6 +88,9 @@ describe('Workflow Resumability & State Persistence Integration Tests', () => {
         ProductManagerAgent,
         RequirementsEngineerAgent,
         ArchitectAgent,
+        DeveloperAgent,
+        CodeReviewerAgent,
+        QaAgent,
         ToolRegistry,
         PromptTemplateService,
         AiGatewayService,

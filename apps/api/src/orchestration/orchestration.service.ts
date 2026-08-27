@@ -40,6 +40,12 @@ export class OrchestrationService {
       iterationCount: 0,
       activeApprovalRequestId: null,
       mcpToolCalls: [],
+      pullRequests: [],
+      activePrNumber: null,
+      codeReviewVerdicts: [],
+      testRuns: [],
+      qaRetryCount: 0,
+      maxQaRetries: 3,
       history: [],
     };
 

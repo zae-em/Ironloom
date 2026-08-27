@@ -6,6 +6,11 @@ import {
   ArchitectureProposalSchema,
 } from './sdlc.schema';
 import { McpToolCallRecordSchema } from './mcp.schema';
+import {
+  PullRequestEntitySchema,
+  CodeReviewVerdictSchema,
+  TestRunEntitySchema,
+} from './engineering.schema';
 
 export const WorkflowRunStatusSchema = z.enum([
   'running',
@@ -31,6 +36,10 @@ export const WorkflowNodeNameSchema = z.enum([
   'architect_node',
   'gate_architecture',
   'mcp_sync_node',
+  'dev_node',
+  'code_review_node',
+  'qa_node',
+  'gate_pr_human_review',
   'dev_stub_node',
   'qa_stub_node',
   'completed',
@@ -49,6 +58,12 @@ export const WorkflowStatePayloadSchema = z.object({
   iterationCount: z.number().default(0),
   activeApprovalRequestId: z.string().uuid().optional().nullable(),
   mcpToolCalls: z.array(McpToolCallRecordSchema).default([]),
+  pullRequests: z.array(PullRequestEntitySchema).default([]),
+  activePrNumber: z.number().optional().nullable(),
+  codeReviewVerdicts: z.array(CodeReviewVerdictSchema).default([]),
+  testRuns: z.array(TestRunEntitySchema).default([]),
+  qaRetryCount: z.number().default(0),
+  maxQaRetries: z.number().default(3),
   history: z
     .array(
       z.object({

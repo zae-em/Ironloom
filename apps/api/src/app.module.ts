@@ -14,6 +14,7 @@ import { RAGModule } from './rag/rag.module';
 import { SdlcModule } from './sdlc/sdlc.module';
 import { OrchestrationModule } from './orchestration/orchestration.module';
 import { McpModule } from './mcp/mcp.module';
+import { SandboxModule } from './sandbox/sandbox.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { McpModule } from './mcp/mcp.module';
     SdlcModule,
     OrchestrationModule,
     McpModule,
+    SandboxModule,
   ],
 })
 export class AppModule {}

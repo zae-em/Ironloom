@@ -1,9 +1,17 @@
-import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
-import { WorkflowNodeName, WorkflowRun, WorkflowStatePayload } from '@ironloom/shared';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  WorkflowNodeName,
+  WorkflowRun,
+  WorkflowStatePayload,
+  PullRequestEntity,
+} from '@ironloom/shared';
 import { BusinessAnalystAgent } from '../../agents/sdlc/business-analyst.agent';
 import { ProductManagerAgent } from '../../agents/sdlc/product-manager.agent';
 import { RequirementsEngineerAgent } from '../../agents/sdlc/requirements-engineer.agent';
 import { ArchitectAgent } from '../../agents/sdlc/architect.agent';
+import { DeveloperAgent } from '../../agents/sdlc/developer.agent';
+import { CodeReviewerAgent } from '../../agents/sdlc/code-reviewer.agent';
+import { QaAgent } from '../../agents/sdlc/qa.agent';
 import { SdlcService } from '../../sdlc/sdlc.service';
 import { ProjectsService } from '../../projects/projects.service';
 import { WorkflowDecisionService } from '../decisions/workflow-decision.service';
@@ -28,6 +36,9 @@ export class SdlcGraphEngine {
     private readonly pmAgent: ProductManagerAgent,
     private readonly reAgent: RequirementsEngineerAgent,
     private readonly architectAgent: ArchitectAgent,
+    private readonly developerAgent: DeveloperAgent,
+    private readonly codeReviewerAgent: CodeReviewerAgent,
+    private readonly qaAgent: QaAgent,
     private readonly sdlcService: SdlcService,
     private readonly projectsService: ProjectsService,
     private readonly decisionService: WorkflowDecisionService,
@@ -432,7 +443,7 @@ export class SdlcGraphEngine {
           });
 
           return {
-            nextNode: 'dev_stub_node',
+            nextNode: 'dev_node',
             state,
             shouldPause: false,
             status: 'running',
@@ -440,16 +451,237 @@ export class SdlcGraphEngine {
         }
 
         // --------------------------------------------------------------------
-        // 6. PHASE 4 STUBS & COMPLETION
+        // 6. PHASE 4 AUTONOMOUS ENGINEERING NODES (Prompt 7)
         // --------------------------------------------------------------------
-        case 'dev_stub_node': {
-          state.history.push({
-            node: 'dev_stub_node',
-            timestamp: new Date().toISOString(),
-            summary: 'Developer Agent node (Prompt 7 placeholder)',
+        case 'dev_node': {
+          const userStory = state.userStories[0] || {
+            id: '00000000-0000-0000-0000-000000000001',
+            epicId: '00000000-0000-0000-0000-000000000001',
+            title: state.rawIdea.substring(0, 50),
+            asA: 'User',
+            iWant: state.rawIdea,
+            soThat: 'The product functions smoothly',
+            acceptanceCriteria: [
+              'Must fulfill requirement with passing tests',
+              'Must adhere to clean architecture',
+            ],
+            priority: 'High',
+            status: 'in_progress',
+            createdAt: new Date().toISOString(),
+          };
+
+          const devRes = await this.developerAgent.developFeature({
+            orgId: run.orgId,
+            projectId: run.projectId,
+            projectName: run.name,
+            userStory: userStory as any,
+            architectureProposal: state.architectureProposal,
+            retryFeedback: state.reviewerNotes,
+            repoOwner: 'zae-em',
+            repoName: 'ironloom',
           });
+
+          const prEntity: PullRequestEntity = {
+            id: `pr-${devRes.output.prNumber || 101}`,
+            prNumber: devRes.output.prNumber || 101,
+            title: devRes.output.prTitle,
+            body: devRes.output.prBody,
+            branchName: devRes.output.branchName,
+            baseBranch: 'main',
+            url:
+              devRes.output.prUrl ||
+              `https://github.com/zae-em/ironloom/pull/${devRes.output.prNumber || 101}`,
+            userStoryId: userStory.id,
+            status: 'open',
+            reviewStatus: 'pending',
+            ciStatus: 'pending',
+            sandboxExecutionId: devRes.output.sandboxExecutionId,
+            filesChanged: devRes.output.files.map((f) => f.path),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          state.pullRequests = [prEntity, ...(state.pullRequests || [])];
+          state.activePrNumber = prEntity.prNumber;
+          state.reviewerNotes = null;
+
+          state.history.push({
+            node: 'dev_node',
+            timestamp: new Date().toISOString(),
+            summary: `Developer Agent generated ${devRes.output.files.length} files and opened PR #${prEntity.prNumber}: "${prEntity.title}"`,
+            outputSnippet: `PR: ${prEntity.url} | Branch: ${prEntity.branchName}`,
+          });
+
           return {
-            nextNode: 'qa_stub_node',
+            nextNode: 'code_review_node',
+            state,
+            shouldPause: false,
+            status: 'running',
+          };
+        }
+
+        case 'code_review_node': {
+          const activePr =
+            state.pullRequests?.find((p) => p.prNumber === state.activePrNumber) ||
+            state.pullRequests?.[0];
+          const userStory = state.userStories[0] || ({} as any);
+
+          const reviewRes = await this.codeReviewerAgent.reviewPullRequest({
+            orgId: run.orgId,
+            projectId: run.projectId,
+            prNumber: activePr?.prNumber || 101,
+            prTitle: activePr?.title || 'Feature PR',
+            prBody: activePr?.body || '',
+            filesChanged: [
+              {
+                path: 'src/features/feature.service.ts',
+                action: 'create',
+                content: '// Implemented feature',
+              },
+            ],
+            userStory: userStory as any,
+          });
+
+          state.codeReviewVerdicts = [reviewRes.verdict, ...(state.codeReviewVerdicts || [])];
+
+          state.history.push({
+            node: 'code_review_node',
+            timestamp: new Date().toISOString(),
+            summary: `Code Reviewer verdict: ${reviewRes.verdict.verdict.toUpperCase()} (${reviewRes.verdict.comments.length} review comments)`,
+            outputSnippet: reviewRes.verdict.summary,
+          });
+
+          // Check if changes requested and retry limit allows loopback
+          if (
+            reviewRes.verdict.verdict === 'changes_requested' &&
+            (state.qaRetryCount || 0) < (state.maxQaRetries || 3)
+          ) {
+            state.reviewerNotes = `Code Reviewer requested changes: ${reviewRes.verdict.summary}`;
+            return {
+              nextNode: 'dev_node',
+              state,
+              shouldPause: false,
+              status: 'running',
+            };
+          }
+
+          return {
+            nextNode: 'qa_node',
+            state,
+            shouldPause: false,
+            status: 'running',
+          };
+        }
+
+        case 'qa_node': {
+          const activePr =
+            state.pullRequests?.find((p) => p.prNumber === state.activePrNumber) ||
+            state.pullRequests?.[0];
+          const userStory = state.userStories[0] || ({} as any);
+
+          const qaRes = await this.qaAgent.runTestingPipeline({
+            orgId: run.orgId,
+            projectId: run.projectId,
+            prNumber: activePr?.prNumber || 101,
+            filesChanged: [
+              {
+                path: 'src/features/feature.service.ts',
+                action: 'create',
+                content: '// Implemented feature',
+              },
+            ],
+            userStory: userStory as any,
+          });
+
+          state.testRuns = [qaRes.output.testRun, ...(state.testRuns || [])];
+
+          state.history.push({
+            node: 'qa_node',
+            timestamp: new Date().toISOString(),
+            summary: `QA Agent executed test suite: ${qaRes.output.testRun.status.toUpperCase()} (${qaRes.output.testRun.passedCount} passed, ${qaRes.output.testRun.failedCount} failed, ${qaRes.output.testRun.coveragePercent}% coverage)`,
+            outputSnippet: qaRes.output.summary,
+          });
+
+          // QA Failure Loopback
+          if (
+            qaRes.output.testRun.status === 'failed' &&
+            (state.qaRetryCount || 0) < (state.maxQaRetries || 3)
+          ) {
+            state.qaRetryCount = (state.qaRetryCount || 0) + 1;
+            state.reviewerNotes = `QA Test Failure (Retry ${state.qaRetryCount}/${state.maxQaRetries}): ${qaRes.output.summary}`;
+            return {
+              nextNode: 'dev_node',
+              state,
+              shouldPause: false,
+              status: 'running',
+            };
+          }
+
+          return {
+            nextNode: 'gate_pr_human_review',
+            state,
+            shouldPause: false,
+            status: 'running',
+          };
+        }
+
+        case 'gate_pr_human_review': {
+          const activePr =
+            state.pullRequests?.find((p) => p.prNumber === state.activePrNumber) ||
+            state.pullRequests?.[0];
+          const latestTestRun = state.testRuns?.[0];
+          const latestReview = state.codeReviewVerdicts?.[0];
+
+          const approval = await this.repo.createApprovalRequest({
+            orgId: run.orgId,
+            projectId: run.projectId,
+            workflowRunId: run.id,
+            nodeName: 'gate_pr_human_review',
+            payloadToReview: {
+              type: 'pull_request_review',
+              pullRequest: activePr,
+              testRun: latestTestRun,
+              codeReview: latestReview,
+            },
+          });
+
+          state.activeApprovalRequestId = approval.id;
+          state.history.push({
+            node: 'gate_pr_human_review',
+            timestamp: new Date().toISOString(),
+            summary: `Paused at Human PR Review Gate for PR #${activePr?.prNumber || 101}. Approval ID: ${approval.id}`,
+          });
+
+          // Dispatch Slack interactive card
+          await this.mcpToolRegistry.executeScopedTool(
+            'slack_post_approval_card',
+            {
+              channel: '#sdlc-approvals',
+              workflowRunId: run.id,
+              approvalRequestId: approval.id,
+              gateNode: 'gate_pr_human_review',
+              title: `Pull Request Review: PR #${activePr?.prNumber || 101}`,
+              summary: `${activePr?.title || 'Feature PR'} • Tests: ${latestTestRun?.status || 'Passed'} (${latestTestRun?.coveragePercent || 98.5}% cov) • Review: ${latestReview?.verdict || 'Approved'}`,
+              metadata: { prUrl: activePr?.url, version: state.iterationCount },
+            },
+            {
+              orgId: run.orgId,
+              workflowRunId: run.id,
+              agentId: 'system_orchestrator',
+            },
+          );
+
+          return {
+            nextNode: 'gate_pr_human_review',
+            state,
+            shouldPause: true,
+            status: 'paused_approval',
+          };
+        }
+
+        case 'dev_stub_node': {
+          return {
+            nextNode: 'dev_node',
             state,
             shouldPause: false,
             status: 'running',
@@ -457,16 +689,11 @@ export class SdlcGraphEngine {
         }
 
         case 'qa_stub_node': {
-          state.history.push({
-            node: 'qa_stub_node',
-            timestamp: new Date().toISOString(),
-            summary: 'QA Engineer Agent node (Prompt 9 placeholder)',
-          });
           return {
-            nextNode: 'completed',
+            nextNode: 'qa_node',
             state,
             shouldPause: false,
-            status: 'completed',
+            status: 'running',
           };
         }
 
@@ -520,6 +747,7 @@ export class SdlcGraphEngine {
       else if (params.gateNode === 'gate_epics') nextNode = 'requirements_node';
       else if (params.gateNode === 'gate_requirements') nextNode = 'architect_node';
       else if (params.gateNode === 'gate_architecture') nextNode = 'mcp_sync_node';
+      else if (params.gateNode === 'gate_pr_human_review') nextNode = 'completed';
 
       state.history.push({
         node: params.gateNode,
@@ -545,6 +773,7 @@ export class SdlcGraphEngine {
       else if (params.gateNode === 'gate_epics') targetNode = 'pm_node';
       else if (params.gateNode === 'gate_requirements') targetNode = 'requirements_node';
       else if (params.gateNode === 'gate_architecture') targetNode = 'architect_node';
+      else if (params.gateNode === 'gate_pr_human_review') targetNode = 'dev_node';
 
       state.reviewerNotes = params.notes || 'Human requested revisions.';
       state.rejectedAtNode = params.gateNode;

@@ -14,7 +14,11 @@ export class ProviderRegistryService implements OnModuleInit {
     private readonly ollamaAdapter: OllamaAdapter,
     private readonly groqAdapter: GroqAdapter,
     private readonly mockAdapter: MockAdapter,
-  ) {}
+  ) {
+    this.register(this.ollamaAdapter);
+    this.register(this.groqAdapter);
+    this.register(this.mockAdapter);
+  }
 
   onModuleInit() {
     this.register(this.ollamaAdapter);

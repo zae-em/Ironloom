@@ -28,11 +28,15 @@ import { RedisService } from '../src/redis/redis.service';
 import { MockAdapter } from '../src/ai-gateway/adapters/mock.adapter';
 import { OllamaAdapter } from '../src/ai-gateway/adapters/ollama.adapter';
 import { GroqAdapter } from '../src/ai-gateway/adapters/groq.adapter';
+import { DeveloperAgent } from '../src/agents/sdlc/developer.agent';
+import { CodeReviewerAgent } from '../src/agents/sdlc/code-reviewer.agent';
+import { QaAgent } from '../src/agents/sdlc/qa.agent';
 import { McpModule } from '../src/mcp/mcp.module';
+import { SandboxModule } from '../src/sandbox/sandbox.module';
 
 jest.setTimeout(120000);
 
-describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
+describe('End-to-End SDLC Agent Swarm Workflow Suite', () => {
   let orchestrationService: OrchestrationService;
   let projectsService: ProjectsService;
   let repo: OrchestrationRepository;
@@ -70,6 +74,7 @@ describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
           ],
         }),
         McpModule,
+        SandboxModule,
       ],
       providers: [
         OrchestrationService,
@@ -83,6 +88,9 @@ describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
         ProductManagerAgent,
         RequirementsEngineerAgent,
         ArchitectAgent,
+        DeveloperAgent,
+        CodeReviewerAgent,
+        QaAgent,
         ToolRegistry,
         PromptTemplateService,
         AiGatewayService,
@@ -165,7 +173,7 @@ describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
     currentRun = result.workflowRun;
 
     // ------------------------------------------------------------------------
-    // Gate 3: User Stories & Acceptance Criteria Review
+    // Gate 3: Requirements & User Stories Review
     // ------------------------------------------------------------------------
     expect(currentRun.status).toBe('paused_approval');
     expect(currentRun.currentNode).toBe('gate_requirements');
@@ -195,10 +203,29 @@ describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
     let gate4 = approvals.find((a) => a.workflowRunId === currentRun.id && a.status === 'pending');
     expect(gate4).toBeDefined();
 
-    // Human approves Gate 4
+    // Human approves Gate 4 -> Runs mcp_sync -> dev_node -> code_review_node -> qa_node -> pauses at gate_pr_human_review
     result = await orchestrationService.decideApproval({
       approvalId: gate4!.id,
       dto: { decision: 'approved', notes: 'Architecture blueprint approved.' },
+      actorUserId: ACTOR_ALICE,
+    });
+    currentRun = result.workflowRun;
+
+    // ------------------------------------------------------------------------
+    // Gate 5: Pull Request Human Review Gate
+    // ------------------------------------------------------------------------
+    expect(currentRun.status).toBe('paused_approval');
+    expect(currentRun.currentNode).toBe('gate_pr_human_review');
+    expect(currentRun.statePayload.pullRequests.length).toBeGreaterThan(0);
+
+    approvals = await orchestrationService.listApprovalRequests(testProjectId);
+    let gate5 = approvals.find((a) => a.workflowRunId === currentRun.id && a.status === 'pending');
+    expect(gate5).toBeDefined();
+
+    // Human approves Gate 5 (PR merge approval)
+    result = await orchestrationService.decideApproval({
+      approvalId: gate5!.id,
+      dto: { decision: 'approved', notes: 'Autonomous code, tests, and CI verified.' },
       actorUserId: ACTOR_ALICE,
     });
     currentRun = result.workflowRun;
