@@ -34,9 +34,14 @@ import { QaAgent } from '../src/agents/sdlc/qa.agent';
 import { McpModule } from '../src/mcp/mcp.module';
 import { SandboxModule } from '../src/sandbox/sandbox.module';
 
-jest.setTimeout(120000);
+import { DatabaseModule } from '../src/database/database.module';
+import { DevOpsModule } from '../src/devops/devops.module';
+import { DevOpsAgent } from '../src/agents/sdlc/devops.agent';
+import { MonitoringAgent } from '../src/agents/sdlc/monitoring.agent';
 
-describe('End-to-End SDLC Agent Swarm Workflow Suite', () => {
+jest.setTimeout(180000);
+
+describe('End-to-End Autonomous SDLC Workflow Engine Tests', () => {
   let orchestrationService: OrchestrationService;
   let projectsService: ProjectsService;
   let repo: OrchestrationRepository;
@@ -73,8 +78,10 @@ describe('End-to-End SDLC Agent Swarm Workflow Suite', () => {
             }),
           ],
         }),
+        DatabaseModule,
         McpModule,
         SandboxModule,
+        DevOpsModule,
       ],
       providers: [
         OrchestrationService,
@@ -91,6 +98,8 @@ describe('End-to-End SDLC Agent Swarm Workflow Suite', () => {
         DeveloperAgent,
         CodeReviewerAgent,
         QaAgent,
+        DevOpsAgent,
+        MonitoringAgent,
         ToolRegistry,
         PromptTemplateService,
         AiGatewayService,
@@ -115,8 +124,8 @@ describe('End-to-End SDLC Agent Swarm Workflow Suite', () => {
     repo = module.get<OrchestrationRepository>(OrchestrationRepository);
 
     const project = await projectsService.createProject(ORG_ALPHA, ACTOR_ALICE, {
-      name: 'E2E SDLC Swarm Project',
-      description: 'Verifies entire unattended chain with human approval gates',
+      name: 'Autonomous SDLC E2E Project',
+      description: 'End-to-end integration test project for full agent lifecycle',
     });
     testProjectId = project.id;
   });
@@ -222,10 +231,27 @@ describe('End-to-End SDLC Agent Swarm Workflow Suite', () => {
     let gate5 = approvals.find((a) => a.workflowRunId === currentRun.id && a.status === 'pending');
     expect(gate5).toBeDefined();
 
-    // Human approves Gate 5 (PR merge approval)
+    // Human approves Gate 5 (PR merge approval) -> Promotes Dev -> Staging -> pauses at gate_prod_deploy
     result = await orchestrationService.decideApproval({
       approvalId: gate5!.id,
       dto: { decision: 'approved', notes: 'Autonomous code, tests, and CI verified.' },
+      actorUserId: ACTOR_ALICE,
+    });
+    currentRun = result.workflowRun;
+
+    expect(currentRun.status).toBe('paused_approval');
+    expect(currentRun.currentNode).toBe('gate_prod_deploy');
+
+    // ------------------------------------------------------------------------
+    // Gate 6: Production Deployment Gate
+    // ------------------------------------------------------------------------
+    approvals = await orchestrationService.listApprovalRequests(testProjectId);
+    let gate6 = approvals.find((a) => a.workflowRunId === currentRun.id && a.status === 'pending');
+    expect(gate6).toBeDefined();
+
+    result = await orchestrationService.decideApproval({
+      approvalId: gate6!.id,
+      dto: { decision: 'approved', notes: 'Approved production rollout.' },
       actorUserId: ACTOR_ALICE,
     });
     currentRun = result.workflowRun;

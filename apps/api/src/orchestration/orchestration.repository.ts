@@ -199,6 +199,9 @@ export class OrchestrationRepository {
       decidedBy: null,
       decidedAt: null,
       notes: null,
+      actionType: 'gate_approval',
+      autoApproved: false,
+      matchedPolicyId: null,
       createdAt: now,
     };
 
@@ -244,6 +247,9 @@ export class OrchestrationRepository {
             decidedBy: data.decided_by,
             decidedAt: data.decided_at,
             notes: data.notes,
+            actionType: data.action_type || 'gate_approval',
+            autoApproved: data.auto_approved ?? false,
+            matchedPolicyId: data.matched_policy_id || null,
             createdAt: data.created_at,
           };
         }
@@ -313,6 +319,9 @@ export class OrchestrationRepository {
             decidedBy: d.decided_by,
             decidedAt: d.decided_at,
             notes: d.notes,
+            actionType: d.action_type || 'gate_approval',
+            autoApproved: d.auto_approved ?? false,
+            matchedPolicyId: d.matched_policy_id || null,
             createdAt: d.created_at,
           }));
         }

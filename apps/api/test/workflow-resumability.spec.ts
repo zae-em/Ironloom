@@ -19,8 +19,6 @@ import { PromptTemplateService } from '../src/agents/core/prompts/prompt-templat
 import { AiGatewayService } from '../src/ai-gateway/ai-gateway.service';
 import { RAGService } from '../src/rag/rag.service';
 import { EmbeddingService } from '../src/rag/embedding.service';
-import { SupabaseService } from '../src/database/supabase.service';
-import { AuditLogRepository } from '../src/database/repositories/audit-log.repository';
 import { ProviderRegistryService } from '../src/ai-gateway/adapters/provider-registry.service';
 import { CostCalculatorService } from '../src/ai-gateway/cost/cost-calculator.service';
 import { QuotaTrackerService } from '../src/ai-gateway/quota/quota-tracker.service';
@@ -33,6 +31,11 @@ import { CodeReviewerAgent } from '../src/agents/sdlc/code-reviewer.agent';
 import { QaAgent } from '../src/agents/sdlc/qa.agent';
 import { McpModule } from '../src/mcp/mcp.module';
 import { SandboxModule } from '../src/sandbox/sandbox.module';
+
+import { DatabaseModule } from '../src/database/database.module';
+import { DevOpsModule } from '../src/devops/devops.module';
+import { DevOpsAgent } from '../src/agents/sdlc/devops.agent';
+import { MonitoringAgent } from '../src/agents/sdlc/monitoring.agent';
 
 jest.setTimeout(120000);
 
@@ -73,8 +76,10 @@ describe('Workflow Resumability & State Persistence Integration Tests', () => {
             }),
           ],
         }),
+        DatabaseModule,
         McpModule,
         SandboxModule,
+        DevOpsModule,
       ],
       providers: [
         OrchestrationService,
@@ -91,13 +96,13 @@ describe('Workflow Resumability & State Persistence Integration Tests', () => {
         DeveloperAgent,
         CodeReviewerAgent,
         QaAgent,
+        DevOpsAgent,
+        MonitoringAgent,
         ToolRegistry,
         PromptTemplateService,
         AiGatewayService,
         RAGService,
         EmbeddingService,
-        SupabaseService,
-        AuditLogRepository,
         ProviderRegistryService,
         CostCalculatorService,
         QuotaTrackerService,

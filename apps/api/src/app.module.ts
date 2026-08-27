@@ -15,6 +15,7 @@ import { SdlcModule } from './sdlc/sdlc.module';
 import { OrchestrationModule } from './orchestration/orchestration.module';
 import { McpModule } from './mcp/mcp.module';
 import { SandboxModule } from './sandbox/sandbox.module';
+import { DevOpsModule } from './devops/devops.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { SandboxModule } from './sandbox/sandbox.module';
     OrchestrationModule,
     McpModule,
     SandboxModule,
+    DevOpsModule,
   ],
 })
 export class AppModule {}

@@ -7,6 +7,7 @@ import { AiGatewayModule } from '../ai-gateway/ai-gateway.module';
 import { UsersModule } from '../users/users.module';
 import { McpModule } from '../mcp/mcp.module';
 import { SandboxModule } from '../sandbox/sandbox.module';
+import { DevOpsModule } from '../devops/devops.module';
 import { AgentsCoreModule } from '../agents/core/agents-core.module';
 import { OrchestrationRepository } from './orchestration.repository';
 import { SdlcGraphEngine } from './engine/sdlc-graph.engine';
@@ -21,6 +22,8 @@ import { ArchitectAgent } from '../agents/sdlc/architect.agent';
 import { DeveloperAgent } from '../agents/sdlc/developer.agent';
 import { CodeReviewerAgent } from '../agents/sdlc/code-reviewer.agent';
 import { QaAgent } from '../agents/sdlc/qa.agent';
+import { DevOpsAgent } from '../agents/sdlc/devops.agent';
+import { MonitoringAgent } from '../agents/sdlc/monitoring.agent';
 
 @Module({
   imports: [
@@ -33,6 +36,7 @@ import { QaAgent } from '../agents/sdlc/qa.agent';
     AgentsCoreModule,
     McpModule,
     SandboxModule,
+    DevOpsModule,
   ],
   controllers: [OrchestrationController, McpController],
   providers: [
@@ -47,6 +51,8 @@ import { QaAgent } from '../agents/sdlc/qa.agent';
     DeveloperAgent,
     CodeReviewerAgent,
     QaAgent,
+    DevOpsAgent,
+    MonitoringAgent,
   ],
   exports: [
     OrchestrationService,

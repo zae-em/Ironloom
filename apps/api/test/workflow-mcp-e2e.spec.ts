@@ -13,6 +13,7 @@ import { AiGatewayModule } from '../src/ai-gateway/ai-gateway.module';
 import { UsersModule } from '../src/users/users.module';
 import { OrchestrationModule } from '../src/orchestration/orchestration.module';
 import { McpModule } from '../src/mcp/mcp.module';
+import { DevOpsModule } from '../src/devops/devops.module';
 import { RedisModule } from '../src/redis/redis.module';
 import { OrchestrationService } from '../src/orchestration/orchestration.service';
 import { AuditLogRepository } from '../src/database/repositories/audit-log.repository';
@@ -56,6 +57,7 @@ describe('Workflow & MCP E2E Integration Test Suite', () => {
         UsersModule,
         OrchestrationModule,
         McpModule,
+        DevOpsModule,
       ],
     }).compile();
 
@@ -77,44 +79,45 @@ describe('Workflow & MCP E2E Integration Test Suite', () => {
   });
 
   it('should run full cross-agent workflow, execute mcp_sync_node, and log external actions', async () => {
-    // 1. Start Workflow -> Runs BA Agent, pauses at gate_business_case
+    // 1. Kick off full workflow
     let run = await orchestrationService.startWorkflow({
       orgId: testOrgId,
       projectId: testProjectId,
       actorUserId: testUserId,
       dto: {
-        name: 'MCP Integrated Cloud Native Swarm Run',
-        rawIdea: 'Automated satellite telemetry data ingestion platform with real-time alerting.',
+        name: 'MCP E2E Autonomous Workflow',
+        rawIdea:
+          'Build a real-time order tracking dashboard with WebSocket updates and external issue tracker sync.',
       },
     });
 
     expect(run.status).toBe('paused_approval');
     expect(run.currentNode).toBe('gate_business_case');
 
-    // 2. Approve Gate 1: Business Case -> Runs PM Agent, pauses at gate_epics
+    // 2. Approve Gate 1: Business Case -> Runs PM Node
     let res = await orchestrationService.decideApproval({
       approvalId: run.statePayload.activeApprovalRequestId!,
-      dto: { decision: 'approved', notes: 'Approved Business Case' },
+      dto: { decision: 'approved', notes: 'Business Case Approved' },
       actorUserId: testUserId,
     });
     run = res.workflowRun;
     expect(run.currentNode).toBe('gate_epics');
     expect(run.statePayload.epics.length).toBeGreaterThan(0);
 
-    // 3. Approve Gate 2: Epics -> Runs Requirements Agent, pauses at gate_requirements
+    // 3. Approve Gate 2: Epics -> Runs Requirements Node
     res = await orchestrationService.decideApproval({
       approvalId: run.statePayload.activeApprovalRequestId!,
-      dto: { decision: 'approved', notes: 'Approved Epics' },
+      dto: { decision: 'approved', notes: 'Epics Approved' },
       actorUserId: testUserId,
     });
     run = res.workflowRun;
     expect(run.currentNode).toBe('gate_requirements');
     expect(run.statePayload.userStories.length).toBeGreaterThan(0);
 
-    // 4. Approve Gate 3: Requirements -> Runs Architect Agent, pauses at gate_architecture
+    // 4. Approve Gate 3: Requirements -> Runs Architect Node
     res = await orchestrationService.decideApproval({
       approvalId: run.statePayload.activeApprovalRequestId!,
-      dto: { decision: 'approved', notes: 'Approved User Stories & Gherkin Scenarios' },
+      dto: { decision: 'approved', notes: 'User Stories Approved' },
       actorUserId: testUserId,
     });
     run = res.workflowRun;
@@ -136,12 +139,26 @@ describe('Workflow & MCP E2E Integration Test Suite', () => {
     expect(run.currentNode).toBe('gate_pr_human_review');
     expect(run.statePayload.pullRequests.length).toBeGreaterThan(0);
 
-    // 6. Approve Final Human PR Review Gate -> Marks completed
+    // 6. Approve PR Review Gate -> Promotes Dev -> Promotes Staging -> Pauses at gate_prod_deploy
     res = await orchestrationService.decideApproval({
       approvalId: run.statePayload.activeApprovalRequestId!,
       dto: {
         decision: 'approved',
         notes: 'Human verified green CI and approved merge.',
+      },
+      actorUserId: testUserId,
+    });
+    run = res.workflowRun;
+
+    expect(run.status).toBe('paused_approval');
+    expect(run.currentNode).toBe('gate_prod_deploy');
+
+    // 7. Approve Final Prod Deploy Gate -> Deploys to Prod -> Monitors -> Completed
+    res = await orchestrationService.decideApproval({
+      approvalId: run.statePayload.activeApprovalRequestId!,
+      dto: {
+        decision: 'approved',
+        notes: 'Production rollout approved.',
       },
       actorUserId: testUserId,
     });
@@ -157,8 +174,8 @@ describe('Workflow & MCP E2E Integration Test Suite', () => {
 
     const toolNames = run.statePayload.mcpToolCalls.map((t) => t.toolName);
     expect(toolNames).toContain('github_create_issue');
-    expect(toolNames).toContain('jira_create_epic');
-    expect(toolNames).toContain('slack_post_notification');
+    expect(toolNames).toContain('jira_create_issue');
+    expect(toolNames).toContain('slack_send_message');
 
     // Verify audit logs recorded MCP executions
     const memoryLogs = auditRepo.getMemoryLogs();

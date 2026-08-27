@@ -11,6 +11,7 @@ import {
   CodeReviewVerdictSchema,
   TestRunEntitySchema,
 } from './engineering.schema';
+import { DeploymentEntitySchema, IncidentEntitySchema } from './devops-monitoring.schema';
 
 export const WorkflowRunStatusSchema = z.enum([
   'running',
@@ -40,6 +41,11 @@ export const WorkflowNodeNameSchema = z.enum([
   'code_review_node',
   'qa_node',
   'gate_pr_human_review',
+  'devops_dev_node',
+  'devops_staging_node',
+  'gate_prod_deploy',
+  'devops_prod_node',
+  'monitoring_node',
   'dev_stub_node',
   'qa_stub_node',
   'completed',
@@ -64,6 +70,12 @@ export const WorkflowStatePayloadSchema = z.object({
   testRuns: z.array(TestRunEntitySchema).default([]),
   qaRetryCount: z.number().default(0),
   maxQaRetries: z.number().default(3),
+  deployments: z.array(DeploymentEntitySchema).default([]),
+  incidents: z.array(IncidentEntitySchema).default([]),
+  activeEnvironment: z.enum(['dev', 'staging', 'prod']).optional().nullable(),
+  deploymentTarget: z.string().default('docker-container'),
+  isIncidentFeedbackLoop: z.boolean().default(false),
+  incidentContext: z.any().optional().nullable(),
   history: z
     .array(
       z.object({
@@ -103,6 +115,9 @@ export const ApprovalRequestSchema = z.object({
   decidedBy: z.string().uuid().optional().nullable(),
   decidedAt: z.string().datetime().optional().nullable(),
   notes: z.string().optional().nullable(),
+  actionType: z.string().default('gate_approval'),
+  autoApproved: z.boolean().default(false),
+  matchedPolicyId: z.string().uuid().optional().nullable(),
   createdAt: z.string().datetime(),
 });
 export type ApprovalRequest = z.infer<typeof ApprovalRequestSchema>;
@@ -123,8 +138,10 @@ export type WorkflowDecision = z.infer<typeof WorkflowDecisionSchema>;
 export const StartWorkflowDtoSchema = z.object({
   name: z.string().min(1).default('Autonomous SDLC Pipeline Run'),
   rawIdea: z.string().min(5, 'Raw idea prompt must be at least 5 characters'),
+  isIncidentFeedbackLoop: z.boolean().optional().default(false),
+  incidentContext: z.any().optional().nullable(),
 });
-export type StartWorkflowDto = z.infer<typeof StartWorkflowDtoSchema>;
+export type StartWorkflowDto = z.input<typeof StartWorkflowDtoSchema>;
 
 export const DecideApprovalDtoSchema = z.object({
   decision: z.enum(['approved', 'rejected']),

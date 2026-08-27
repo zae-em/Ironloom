@@ -14,6 +14,7 @@ import { UsersModule } from '../src/users/users.module';
 import { OrchestrationModule } from '../src/orchestration/orchestration.module';
 import { McpModule } from '../src/mcp/mcp.module';
 import { SandboxModule } from '../src/sandbox/sandbox.module';
+import { DevOpsModule } from '../src/devops/devops.module';
 import { RedisModule } from '../src/redis/redis.module';
 import { OrchestrationService } from '../src/orchestration/orchestration.service';
 
@@ -89,6 +90,7 @@ describe('Autonomous Engineering E2E Benchmark Suite (5 Domain Fixtures - Phase 
         OrchestrationModule,
         McpModule,
         SandboxModule,
+        DevOpsModule,
       ],
     }).compile();
 
@@ -98,8 +100,8 @@ describe('Autonomous Engineering E2E Benchmark Suite (5 Domain Fixtures - Phase 
     projectsService = module.get<ProjectsService>(ProjectsService);
 
     const project = await projectsService.createProject(testOrgId, testUserId, {
-      name: 'Autonomous Engineering Phase 4 Benchmark Project',
-      description: 'Verifies 5 end-to-end user stories across diverse engineering domains',
+      name: 'Autonomous Dev Benchmark Project',
+      description: 'Verifies autonomous code writing, reviewing, testing across 5 industry domains',
     });
     testProjectId = project.id;
   });
@@ -110,7 +112,7 @@ describe('Autonomous Engineering E2E Benchmark Suite (5 Domain Fixtures - Phase 
 
   for (const fixture of DOMAIN_FIXTURES) {
     it(`should autonomously implement, review, test, and open green CI PR for: [${fixture.domain}] ${fixture.name}`, async () => {
-      // 1. Start Autonomous Workflow
+      // 1. Kick off full workflow
       let run = await orchestrationService.startWorkflow({
         orgId: testOrgId,
         projectId: testProjectId,
@@ -121,22 +123,35 @@ describe('Autonomous Engineering E2E Benchmark Suite (5 Domain Fixtures - Phase 
         },
       });
 
-      // Fast-forward directly to dev_node to execute the autonomous engineering pipeline
-      run = await orchestrationService.overrideNode(
-        run.id,
-        'dev_node',
-        `Execute Autonomous Dev-Review-QA pipeline for ${fixture.domain}`,
-        testUserId,
-      );
+      // Auto-approve Phase 2-3 gates (Business Case, Epics, User Stories, Architecture)
+      const gatesToApprove = [
+        'gate_business_case',
+        'gate_epics',
+        'gate_requirements',
+        'gate_architecture',
+      ];
 
-      // 2. Verify state progressed through Dev -> Review -> QA and reached Human PR Review Gate
+      for (const gate of gatesToApprove) {
+        expect(run.status).toBe('paused_approval');
+        expect(run.currentNode).toBe(gate);
+
+        const res = await orchestrationService.decideApproval({
+          approvalId: run.statePayload.activeApprovalRequestId!,
+          dto: { decision: 'approved', notes: `Auto-approving ${gate} for ${fixture.name}` },
+          actorUserId: testUserId,
+        });
+        run = res.workflowRun;
+      }
+
+      // 2. Verify Developer, Code Reviewer, and QA Agent Execution outputs
       expect(run.status).toBe('paused_approval');
       expect(run.currentNode).toBe('gate_pr_human_review');
+      expect(run.statePayload.pullRequests.length).toBeGreaterThan(0);
 
       // Verify PR Entity
-      expect(run.statePayload.pullRequests.length).toBeGreaterThan(0);
       const pr = run.statePayload.pullRequests[0];
       expect(pr.prNumber).toBeGreaterThan(0);
+      expect(pr.title).toBeDefined();
       expect(pr.branchName).toMatch(/^feat\/story-/);
       expect(pr.filesChanged.length).toBeGreaterThan(0);
 
@@ -152,12 +167,25 @@ describe('Autonomous Engineering E2E Benchmark Suite (5 Domain Fixtures - Phase 
       expect(testRun.passedCount).toBeGreaterThan(0);
       expect(testRun.coveragePercent).toBeGreaterThan(50);
 
-      // 3. Human Approval Gate: Approve PR
-      const approveRes = await orchestrationService.decideApproval({
+      // 3. Human Approval Gate: Approve PR -> Advances to Staging & Prod Deploy Gate
+      let approveRes = await orchestrationService.decideApproval({
         approvalId: run.statePayload.activeApprovalRequestId!,
         dto: {
           decision: 'approved',
           notes: `Human Reviewer verified green CI and approved merge for ${fixture.name}`,
+        },
+        actorUserId: testUserId,
+      });
+
+      expect(approveRes.workflowRun.status).toBe('paused_approval');
+      expect(approveRes.workflowRun.currentNode).toBe('gate_prod_deploy');
+
+      // 4. Human Approval Gate: Approve Prod Rollout -> Completed
+      approveRes = await orchestrationService.decideApproval({
+        approvalId: approveRes.workflowRun.statePayload.activeApprovalRequestId!,
+        dto: {
+          decision: 'approved',
+          notes: `Approved production rollout for ${fixture.name}`,
         },
         actorUserId: testUserId,
       });

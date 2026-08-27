@@ -6,3 +6,4 @@ export * from './schemas/sdlc.schema';
 export * from './schemas/orchestration.schema';
 export * from './schemas/mcp.schema';
 export * from './schemas/engineering.schema';
+export * from './schemas/devops-monitoring.schema';

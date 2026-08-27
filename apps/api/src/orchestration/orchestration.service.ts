@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import {
   ApprovalRequest,
   DecideApprovalDto,
@@ -46,6 +46,11 @@ export class OrchestrationService {
       testRuns: [],
       qaRetryCount: 0,
       maxQaRetries: 3,
+      deployments: [],
+      incidents: [],
+      deploymentTarget: 'docker-container',
+      isIncidentFeedbackLoop: params.dto.isIncidentFeedbackLoop ?? false,
+      incidentContext: params.dto.incidentContext || null,
       history: [],
     };
 
@@ -61,12 +66,12 @@ export class OrchestrationService {
       actorType: 'user',
       actorId: params.actorUserId,
       projectId: params.projectId,
-      action: 'start_workflow',
-      input: { rawIdea: params.dto.rawIdea },
+      action: 'start_workflow_run',
+      input: { dto: params.dto },
       status: 'success',
     });
 
-    // Execute state machine until the first approval gate is reached
+    // Execute state machine until the first gate or end
     return this.graphEngine.executeUntilGateOrEnd(initialRun, params.actorUserId);
   }
 
@@ -93,6 +98,12 @@ export class OrchestrationService {
     actorUserId: string;
   }): Promise<{ approval: ApprovalRequest; workflowRun: WorkflowRun }> {
     const approval = await this.repo.getApprovalRequest(params.approvalId);
+    if (approval.status !== 'pending') {
+      throw new BadRequestException(
+        `Approval Request ${params.approvalId} has already been decided (${approval.status})`,
+      );
+    }
+
     const updatedApproval = await this.repo.updateApprovalDecision({
       id: params.approvalId,
       status: params.dto.decision,
@@ -117,11 +128,11 @@ export class OrchestrationService {
     });
 
     // Process gate decision in graph state machine
-    const resumedRun = await this.graphEngine.processGateDecision({
+    const resumedRun = await this.graphEngine.decideGateApproval({
       run: workflowRun,
       gateNode: approval.nodeName,
       decision: params.dto.decision,
-      notes: params.dto.notes,
+      notes: params.dto.notes || undefined,
       actorUserId: params.actorUserId,
     });
 
