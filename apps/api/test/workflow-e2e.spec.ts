@@ -28,6 +28,7 @@ import { RedisService } from '../src/redis/redis.service';
 import { MockAdapter } from '../src/ai-gateway/adapters/mock.adapter';
 import { OllamaAdapter } from '../src/ai-gateway/adapters/ollama.adapter';
 import { GroqAdapter } from '../src/ai-gateway/adapters/groq.adapter';
+import { McpModule } from '../src/mcp/mcp.module';
 
 jest.setTimeout(120000);
 
@@ -68,6 +69,7 @@ describe('Full SDLC End-to-End Orchestrated Pipeline Integration Tests', () => {
             }),
           ],
         }),
+        McpModule,
       ],
       providers: [
         OrchestrationService,

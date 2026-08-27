@@ -39,6 +39,7 @@ export class OrchestrationService {
       rejectedAtNode: null,
       iterationCount: 0,
       activeApprovalRequestId: null,
+      mcpToolCalls: [],
       history: [],
     };
 
@@ -138,5 +139,27 @@ export class OrchestrationService {
 
   async getApprovalRequest(id: string): Promise<ApprovalRequest> {
     return this.repo.getApprovalRequest(id);
+  }
+
+  async pauseWorkflow(runId: string, actorUserId: string): Promise<WorkflowRun> {
+    return this.graphEngine.pauseWorkflow(runId, actorUserId);
+  }
+
+  async overrideNode(
+    runId: string,
+    targetNode: any,
+    reason: string,
+    actorUserId: string,
+  ): Promise<WorkflowRun> {
+    return this.graphEngine.overrideNode(runId, targetNode, reason, actorUserId);
+  }
+
+  async editWorkflowState(
+    runId: string,
+    statePayload: WorkflowStatePayload,
+    reason: string,
+    actorUserId: string,
+  ): Promise<WorkflowRun> {
+    return this.graphEngine.editWorkflowState(runId, statePayload, reason, actorUserId);
   }
 }

@@ -43,6 +43,34 @@ export class OrchestrationController {
     return this.orchestrationService.resumeWorkflow(id, user.userId);
   }
 
+  @Post('workflows/:id/pause')
+  async pauseWorkflow(@Param('id') id: string, @CurrentUser() user: AuthUserContext) {
+    return this.orchestrationService.pauseWorkflow(id, user.userId);
+  }
+
+  @Post('workflows/:id/override-node')
+  async overrideNode(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserContext,
+    @Body() body: { targetNode: any; reason: string },
+  ) {
+    return this.orchestrationService.overrideNode(id, body.targetNode, body.reason, user.userId);
+  }
+
+  @Post('workflows/:id/edit-state')
+  async editState(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserContext,
+    @Body() body: { statePayload: any; reason: string },
+  ) {
+    return this.orchestrationService.editWorkflowState(
+      id,
+      body.statePayload,
+      body.reason,
+      user.userId,
+    );
+  }
+
   @Get('projects/:projectId/approvals')
   @UseGuards(OrgMembershipGuard)
   async listApprovals(@Param('projectId') projectId: string) {

@@ -5,10 +5,12 @@ import {
   UserStorySchema,
   ArchitectureProposalSchema,
 } from './sdlc.schema';
+import { McpToolCallRecordSchema } from './mcp.schema';
 
 export const WorkflowRunStatusSchema = z.enum([
   'running',
   'paused_approval',
+  'paused_manual',
   'completed',
   'failed',
   'rejected',
@@ -28,6 +30,7 @@ export const WorkflowNodeNameSchema = z.enum([
   'gate_requirements',
   'architect_node',
   'gate_architecture',
+  'mcp_sync_node',
   'dev_stub_node',
   'qa_stub_node',
   'completed',
@@ -45,6 +48,7 @@ export const WorkflowStatePayloadSchema = z.object({
   rejectedAtNode: WorkflowNodeNameSchema.optional().nullable(),
   iterationCount: z.number().default(0),
   activeApprovalRequestId: z.string().uuid().optional().nullable(),
+  mcpToolCalls: z.array(McpToolCallRecordSchema).default([]),
   history: z
     .array(
       z.object({
@@ -112,3 +116,15 @@ export const DecideApprovalDtoSchema = z.object({
   notes: z.string().optional(),
 });
 export type DecideApprovalDto = z.infer<typeof DecideApprovalDtoSchema>;
+
+export const OverrideNodeDtoSchema = z.object({
+  targetNode: WorkflowNodeNameSchema,
+  reason: z.string().min(1, 'Reason for manual override is required'),
+});
+export type OverrideNodeDto = z.infer<typeof OverrideNodeDtoSchema>;
+
+export const EditWorkflowStateDtoSchema = z.object({
+  statePayload: WorkflowStatePayloadSchema,
+  reason: z.string().min(1, 'Reason for manual state edit is required'),
+});
+export type EditWorkflowStateDto = z.infer<typeof EditWorkflowStateDtoSchema>;

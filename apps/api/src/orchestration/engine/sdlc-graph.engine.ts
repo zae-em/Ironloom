@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { WorkflowNodeName, WorkflowRun, WorkflowStatePayload } from '@ironloom/shared';
 import { BusinessAnalystAgent } from '../../agents/sdlc/business-analyst.agent';
 import { ProductManagerAgent } from '../../agents/sdlc/product-manager.agent';
@@ -8,12 +8,13 @@ import { SdlcService } from '../../sdlc/sdlc.service';
 import { ProjectsService } from '../../projects/projects.service';
 import { WorkflowDecisionService } from '../decisions/workflow-decision.service';
 import { OrchestrationRepository } from '../orchestration.repository';
+import { McpToolRegistryService } from '../../mcp/mcp-tool-registry.service';
 
 export interface NodeExecutionResult {
   nextNode: WorkflowNodeName;
   state: WorkflowStatePayload;
   shouldPause: boolean;
-  status: 'running' | 'paused_approval' | 'completed' | 'failed';
+  status: 'running' | 'paused_approval' | 'paused_manual' | 'completed' | 'failed';
   error?: string;
 }
 
@@ -30,6 +31,7 @@ export class SdlcGraphEngine {
     private readonly sdlcService: SdlcService,
     private readonly projectsService: ProjectsService,
     private readonly decisionService: WorkflowDecisionService,
+    private readonly mcpToolRegistry: McpToolRegistryService,
   ) {}
 
   /**
@@ -73,7 +75,10 @@ export class SdlcGraphEngine {
     node: WorkflowNodeName,
     actorUserId: string,
   ): Promise<NodeExecutionResult> {
-    const state = { ...run.statePayload };
+    const state: WorkflowStatePayload = {
+      ...run.statePayload,
+      mcpToolCalls: run.statePayload.mcpToolCalls || [],
+    };
 
     try {
       switch (node) {
@@ -145,6 +150,30 @@ export class SdlcGraphEngine {
           });
 
           state.activeApprovalRequestId = approvalReq.id;
+
+          // Dispatch Slack interactive notification for approval gate
+          try {
+            const slackCall = await this.mcpToolRegistry.executeScopedTool(
+              'slack_post_approval_card',
+              {
+                channel: '#sdlc-approvals',
+                workflowRunId: run.id,
+                approvalRequestId: approvalReq.id,
+                gateNode: 'gate_business_case',
+                title: 'Business Case Approval Required',
+                summary: `Problem: ${businessCase.problemStatement.substring(0, 140)}...`,
+                metadata: { version: businessCase.version, goals: businessCase.goals },
+              },
+              {
+                orgId: run.orgId,
+                workflowRunId: run.id,
+                agentId: 'business_analyst_agent',
+              },
+            );
+            state.mcpToolCalls.push(slackCall);
+          } catch (mcpErr: any) {
+            this.logger.warn(`Slack approval dispatch error: ${mcpErr.message}`);
+          }
 
           return {
             nextNode: 'gate_business_case',
@@ -327,7 +356,91 @@ export class SdlcGraphEngine {
         }
 
         // --------------------------------------------------------------------
-        // 5. PHASE 4 STUBS & COMPLETION
+        // 5. MCP TOOL INTEGRATION NODE (GitHub / Jira / Slack Automation)
+        // --------------------------------------------------------------------
+        case 'mcp_sync_node': {
+          this.logger.log(`[MCP Sync Node] Syncing approved plan to GitHub, Jira, and Slack...`);
+
+          const archTitle = state.architectureProposal?.title || 'SDLC Approved Plan';
+          const summaryText = state.businessCase?.problemStatement || state.rawIdea;
+
+          // 1. GitHub Issue Creation
+          const ghCall = await this.mcpToolRegistry.executeScopedTool(
+            'github_create_issue',
+            {
+              owner: 'zae-em',
+              repo: 'ironloom',
+              title: `[APPROVED ARCHITECTURE] ${archTitle}`,
+              body: `### System Architecture\n${state.architectureProposal?.summary || 'Approved plan.'}\n\n### Business Context\n${summaryText}`,
+              labels: ['architecture', 'approved-sdlc', 'auto-generated'],
+            },
+            {
+              orgId: run.orgId,
+              workflowRunId: run.id,
+              agentId: 'architect_agent',
+              role: 'architect',
+            },
+          );
+          state.mcpToolCalls.push(ghCall);
+
+          // 2. Jira Epic Creation
+          const jiraCall = await this.mcpToolRegistry.executeScopedTool(
+            'jira_create_epic',
+            {
+              projectKey: 'IRON',
+              name: archTitle.substring(0, 30),
+              summary: archTitle,
+              description: `Epic synthesized by IRONLOOM Multi-Agent Swarm.\n\nProblem: ${summaryText}`,
+            },
+            {
+              orgId: run.orgId,
+              workflowRunId: run.id,
+              agentId: 'product_manager_agent',
+              role: 'product_manager',
+            },
+          );
+          state.mcpToolCalls.push(jiraCall);
+
+          // 3. Slack Broadcast Notification
+          const slackCall = await this.mcpToolRegistry.executeScopedTool(
+            'slack_post_notification',
+            {
+              channel: '#engineering-sdlc',
+              title: `Architecture Plan Approved & Dispatched!`,
+              message: `The cross-agent SDLC workflow for *${run.name}* has completed human architecture review and synced tickets to external systems.`,
+              status: 'success',
+              fields: [
+                { title: 'Project', value: run.name },
+                { title: 'Architecture Title', value: archTitle },
+                { title: 'GitHub Issue', value: (ghCall.output as any)?.url || 'Synced' },
+                { title: 'Jira Epic', value: (jiraCall.output as any)?.key || 'Synced' },
+              ],
+            },
+            {
+              orgId: run.orgId,
+              workflowRunId: run.id,
+              agentId: 'system_orchestrator',
+            },
+          );
+          state.mcpToolCalls.push(slackCall);
+
+          state.history.push({
+            node: 'mcp_sync_node',
+            timestamp: new Date().toISOString(),
+            summary: 'Synced plan with GitHub issue, Jira epic, and broadcast to Slack.',
+            outputSnippet: `GitHub: ${(ghCall.output as any)?.url} | Jira: ${(jiraCall.output as any)?.key}`,
+          });
+
+          return {
+            nextNode: 'dev_stub_node',
+            state,
+            shouldPause: false,
+            status: 'running',
+          };
+        }
+
+        // --------------------------------------------------------------------
+        // 6. PHASE 4 STUBS & COMPLETION
         // --------------------------------------------------------------------
         case 'dev_stub_node': {
           state.history.push({
@@ -406,7 +519,7 @@ export class SdlcGraphEngine {
       if (params.gateNode === 'gate_business_case') nextNode = 'pm_node';
       else if (params.gateNode === 'gate_epics') nextNode = 'requirements_node';
       else if (params.gateNode === 'gate_requirements') nextNode = 'architect_node';
-      else if (params.gateNode === 'gate_architecture') nextNode = 'dev_stub_node';
+      else if (params.gateNode === 'gate_architecture') nextNode = 'mcp_sync_node';
 
       state.history.push({
         node: params.gateNode,
@@ -452,5 +565,77 @@ export class SdlcGraphEngine {
       // Resume graph execution at the target re-generation node
       return this.executeUntilGateOrEnd(updatedRun, params.actorUserId);
     }
+  }
+
+  /**
+   * Manual admin override: Pauses a running workflow.
+   */
+  async pauseWorkflow(runId: string, actorUserId: string): Promise<WorkflowRun> {
+    const run = await this.repo.getWorkflowRun(runId);
+    const state = { ...run.statePayload };
+    state.history.push({
+      node: run.currentNode,
+      timestamp: new Date().toISOString(),
+      summary: `Workflow manually PAUSED by admin (${actorUserId})`,
+    });
+
+    return this.repo.updateWorkflowRunState({
+      id: runId,
+      currentNode: run.currentNode,
+      status: 'paused_manual',
+      statePayload: state,
+    });
+  }
+
+  /**
+   * Manual admin override: Skips or transitions directly to a designated target node.
+   */
+  async overrideNode(
+    runId: string,
+    targetNode: WorkflowNodeName,
+    reason: string,
+    actorUserId: string,
+  ): Promise<WorkflowRun> {
+    const run = await this.repo.getWorkflowRun(runId);
+    const state = { ...run.statePayload };
+    state.history.push({
+      node: targetNode,
+      timestamp: new Date().toISOString(),
+      summary: `Manual node OVERRIDE to '${targetNode}' by admin (${actorUserId}). Reason: ${reason}`,
+    });
+
+    const updated = await this.repo.updateWorkflowRunState({
+      id: runId,
+      currentNode: targetNode,
+      status: 'running',
+      statePayload: state,
+    });
+
+    return this.executeUntilGateOrEnd(updated, actorUserId);
+  }
+
+  /**
+   * Manual admin override: Edits state payload before re-running a node.
+   */
+  async editWorkflowState(
+    runId: string,
+    newStatePayload: WorkflowStatePayload,
+    reason: string,
+    actorUserId: string,
+  ): Promise<WorkflowRun> {
+    const run = await this.repo.getWorkflowRun(runId);
+    const updatedState = { ...newStatePayload };
+    updatedState.history.push({
+      node: run.currentNode,
+      timestamp: new Date().toISOString(),
+      summary: `Workflow state manually EDITED by admin (${actorUserId}). Reason: ${reason}`,
+    });
+
+    return this.repo.updateWorkflowRunState({
+      id: runId,
+      currentNode: run.currentNode,
+      status: run.status,
+      statePayload: updatedState,
+    });
   }
 }

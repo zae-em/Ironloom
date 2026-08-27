@@ -28,8 +28,9 @@ import { RedisService } from '../src/redis/redis.service';
 import { MockAdapter } from '../src/ai-gateway/adapters/mock.adapter';
 import { OllamaAdapter } from '../src/ai-gateway/adapters/ollama.adapter';
 import { GroqAdapter } from '../src/ai-gateway/adapters/groq.adapter';
+import { McpModule } from '../src/mcp/mcp.module';
 
-jest.setTimeout(60000);
+jest.setTimeout(120000);
 
 describe('Workflow Resumability & State Persistence Integration Tests', () => {
   let orchestrationService: OrchestrationService;
@@ -68,6 +69,7 @@ describe('Workflow Resumability & State Persistence Integration Tests', () => {
             }),
           ],
         }),
+        McpModule,
       ],
       providers: [
         OrchestrationService,

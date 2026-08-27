@@ -13,6 +13,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { RAGModule } from './rag/rag.module';
 import { SdlcModule } from './sdlc/sdlc.module';
 import { OrchestrationModule } from './orchestration/orchestration.module';
+import { McpModule } from './mcp/mcp.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { OrchestrationModule } from './orchestration/orchestration.module';
     RAGModule,
     SdlcModule,
     OrchestrationModule,
+    McpModule,
   ],
 })
 export class AppModule {}
