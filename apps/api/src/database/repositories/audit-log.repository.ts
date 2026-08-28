@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateAuditLogDto, AuditLogEvent } from '@ironloom/shared';
 import { SupabaseService } from '../supabase.service';
+import { sanitizeSecrets } from '../../common/utils/secret-sanitizer';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -22,8 +23,8 @@ export class AuditLogRepository {
       actor_type: dto.actorType,
       actor_id: dto.actorId,
       action: dto.action,
-      input: dto.input || {},
-      output: dto.output || {},
+      input: sanitizeSecrets(dto.input || {}),
+      output: sanitizeSecrets(dto.output || {}),
       model: dto.model || null,
       provider: dto.provider || null,
       cost_usd: Number(dto.costUsd || 0),

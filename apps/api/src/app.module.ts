@@ -16,6 +16,9 @@ import { OrchestrationModule } from './orchestration/orchestration.module';
 import { McpModule } from './mcp/mcp.module';
 import { SandboxModule } from './sandbox/sandbox.module';
 import { DevOpsModule } from './devops/devops.module';
+import { EmailModule } from './email/email.module';
+import { AuditModule } from './audit/audit.module';
+import { AlertingModule } from './alerting/alerting.module';
 
 @Module({
   imports: [
@@ -39,6 +42,9 @@ import { DevOpsModule } from './devops/devops.module';
     McpModule,
     SandboxModule,
     DevOpsModule,
+    EmailModule,
+    AuditModule,
+    AlertingModule,
   ],
 })
 export class AppModule {}

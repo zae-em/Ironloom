@@ -26,6 +26,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { CostDashboard } from '../../../../components/analytics/cost-dashboard';
 
 export default function ProviderSettingsPage() {
   const { activeOrg, userRole } = useAuth();
@@ -288,6 +289,9 @@ export default function ProviderSettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* AI Gateway Cost Control & Spend Caps Dashboard */}
+      <CostDashboard />
 
       {/* Provider Priority & API Key Form (Admin/Owner) */}
       {isOwnerOrAdmin && (

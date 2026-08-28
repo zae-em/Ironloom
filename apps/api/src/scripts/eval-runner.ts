@@ -212,15 +212,20 @@ async function runEvaluationSuite() {
   }
 
   // Print Summary Table
-  console.log('\n📊 AGENT EVALUATION QUALITY SCORECARD:\n');
+  console.log('\n📊 AGENT EVALUATION QUALITY SCORECARD (9 Specialized Agents):\n');
   console.table(
     scorecards.map((s) => ({
       Fixture: s.fixtureId,
       Domain: s.domain,
-      'BA Score': `${(s.businessCaseScore * 100).toFixed(0)}%`,
-      'PM Score': `${(s.epicsScore * 100).toFixed(0)}%`,
-      'RE Score': `${(s.storiesScore * 100).toFixed(0)}%`,
-      'Arch Score': `${(s.architectureScore * 100).toFixed(0)}%`,
+      BA: `${(s.businessCaseScore * 100).toFixed(0)}%`,
+      PM: `${(s.epicsScore * 100).toFixed(0)}%`,
+      RE: `${(s.storiesScore * 100).toFixed(0)}%`,
+      Arch: `${(s.architectureScore * 100).toFixed(0)}%`,
+      Dev: `${(s.developerScore * 100).toFixed(0)}%`,
+      Reviewer: `${(s.codeReviewerScore * 100).toFixed(0)}%`,
+      QA: `${(s.qaScore * 100).toFixed(0)}%`,
+      DevOps: `${(s.devOpsScore * 100).toFixed(0)}%`,
+      SRE: `${(s.monitoringScore * 100).toFixed(0)}%`,
       'Overall Score': `${(s.overallScore * 100).toFixed(0)}%`,
       Status: s.passed ? '✅ PASS' : '❌ FAIL',
     })),

@@ -7,8 +7,12 @@ import { GroqAdapter } from './adapters/groq.adapter';
 import { MockAdapter } from './adapters/mock.adapter';
 import { CostCalculatorService } from './cost/cost-calculator.service';
 import { QuotaTrackerService } from './quota/quota-tracker.service';
+import { CostBudgetService } from './cost-budget.service';
+import { RedisModule } from '../redis/redis.module';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
+  imports: [RedisModule, DatabaseModule],
   providers: [
     AiGatewayService,
     ProviderRegistryService,
@@ -17,6 +21,7 @@ import { QuotaTrackerService } from './quota/quota-tracker.service';
     MockAdapter,
     CostCalculatorService,
     QuotaTrackerService,
+    CostBudgetService,
   ],
   controllers: [AiGatewayController],
   exports: [
@@ -24,6 +29,7 @@ import { QuotaTrackerService } from './quota/quota-tracker.service';
     ProviderRegistryService,
     QuotaTrackerService,
     CostCalculatorService,
+    CostBudgetService,
     MockAdapter,
     OllamaAdapter,
     GroqAdapter,

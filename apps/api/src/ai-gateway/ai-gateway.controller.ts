@@ -50,4 +50,19 @@ export class AiGatewayController {
       timestamp: new Date().toISOString(),
     };
   }
+
+  @Get('costs')
+  async getCosts(@Body() body: { orgId?: string }) {
+    const orgId = body?.orgId || '00000000-0000-0000-0000-000000000001';
+    return (
+      (this.gatewayService as any).costBudgetService?.getCostAnalytics(orgId) || {
+        totalSpendUsd: 0,
+        monthlyCapUsd: 50,
+        utilizationPercent: 0,
+        spendByAgent: [],
+        spendByProvider: [],
+        recommendations: [],
+      }
+    );
+  }
 }

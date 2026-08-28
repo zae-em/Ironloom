@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { SupabaseService } from '../database/supabase.service';
 import { AuditLogRepository } from '../database/repositories/audit-log.repository';
+import { TransactionalEmailService } from '../email/email.service';
 import {
   CreateOrganizationDto,
   InviteMemberDto,
@@ -35,6 +36,7 @@ export class OrganizationsService {
   constructor(
     private readonly supabaseService: SupabaseService,
     private readonly auditRepo: AuditLogRepository,
+    private readonly emailService: TransactionalEmailService,
   ) {
     // Seed initial in-memory defaults
     const defaultAlphaOrg: Organization = {
@@ -240,8 +242,18 @@ export class OrganizationsService {
     });
     this.memoryMembers.set(orgId, members);
 
+    const org = await this.getOrganization(orgId);
+
+    // Send transactional invitation email
+    await this.emailService.sendOrganizationInviteEmail({
+      toEmail: dto.email,
+      orgName: org.name,
+      inviteToken: token,
+      role: dto.role || 'member',
+    });
+
     this.logger.log(
-      `[MEMBER INVITE GENERATED] Org: ${orgId}, Email: ${dto.email}, Role: ${dto.role}, Invite Token: ${token} (Email delivery stubbed for Prompt 12)`,
+      `[MEMBER INVITE DELIVERED] Org: ${org.name} (${orgId}), Recipient: ${dto.email}, Role: ${dto.role}, Invite Token: ${token}`,
     );
 
     // Audit log
@@ -251,7 +263,7 @@ export class OrganizationsService {
       actorId: actorUserId,
       action: 'organization.member_invite',
       input: { email: dto.email, role: dto.role },
-      output: { inviteId, token },
+      output: { inviteId, token, emailDispatched: true },
       status: 'success',
     });
 

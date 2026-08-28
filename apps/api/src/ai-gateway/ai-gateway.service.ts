@@ -8,6 +8,7 @@ import {
 } from '@ironloom/shared';
 import { ProviderRegistryService } from './adapters/provider-registry.service';
 import { QuotaTrackerService } from './quota/quota-tracker.service';
+import { CostBudgetService } from './cost-budget.service';
 import { AuditLogRepository } from '../database/repositories/audit-log.repository';
 import { ProviderCompletionResult } from './interfaces/provider-adapter.interface';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,6 +17,7 @@ export interface CompleteOptions {
   agentDefaultProvider?: AiProviderName;
   customFallbackChain?: AiProviderName[];
   skipQuotaCheck?: boolean;
+  adminOverride?: boolean;
 }
 
 @Injectable()
@@ -26,6 +28,7 @@ export class AiGatewayService {
     private readonly configService: ConfigService,
     private readonly providerRegistry: ProviderRegistryService,
     private readonly quotaTracker: QuotaTrackerService,
+    private readonly costBudgetService: CostBudgetService,
     private readonly auditLogRepository: AuditLogRepository,
   ) {}
 
@@ -42,7 +45,21 @@ export class AiGatewayService {
     const maxRetries = this.configService.get<number>('aiGateway.maxRetries', 2);
     const retryDelayMs = this.configService.get<number>('aiGateway.retryDelayMs', 500);
 
-    // 2. Build provider candidate chain
+    // 2. Preflight Spend Cap & Budget Check
+    let requestedProvider = request.preferredProvider || options.agentDefaultProvider || 'ollama';
+
+    const budgetCheck = await this.costBudgetService.preflightCheck({
+      orgId: request.orgId || '00000000-0000-0000-0000-000000000000',
+      projectId: request.projectId || null,
+      requestedProvider: requestedProvider as AiProviderName,
+      adminOverride: options.adminOverride,
+    });
+
+    if (budgetCheck.forcedProvider) {
+      requestedProvider = budgetCheck.forcedProvider;
+    }
+
+    // 3. Build provider candidate chain
     const defaultProvider = this.configService.get<string>(
       'aiGateway.defaultProvider',
       'ollama',
@@ -51,13 +68,15 @@ export class AiGatewayService {
       'groq',
     ]) as AiProviderName[];
 
-    const primaryProvider =
-      request.preferredProvider || options.agentDefaultProvider || defaultProvider;
+    const primaryProvider = (budgetCheck.forcedProvider ||
+      requestedProvider ||
+      defaultProvider) as AiProviderName;
 
-    const fallbackProviders =
-      request.fallbackProviders ||
-      options.customFallbackChain ||
-      configuredFallbacks.filter((p) => p !== primaryProvider);
+    const fallbackProviders = budgetCheck.forcedProvider
+      ? []
+      : request.fallbackProviders ||
+        options.customFallbackChain ||
+        configuredFallbacks.filter((p) => p !== primaryProvider);
 
     const providerChain: AiProviderName[] = [primaryProvider, ...fallbackProviders];
 
@@ -68,7 +87,7 @@ export class AiGatewayService {
     let totalAttempts = 0;
     const errors: { provider: AiProviderName; attempt: number; error: string }[] = [];
 
-    // 3. Iterate through provider chain
+    // 4. Iterate through provider chain
     for (let pIndex = 0; pIndex < uniqueChain.length; pIndex++) {
       const providerName = uniqueChain[pIndex];
       const adapter = this.providerRegistry.get(providerName);
@@ -80,7 +99,7 @@ export class AiGatewayService {
         continue;
       }
 
-      // 4. Rate-Limit / Quota Pre-emptive Awareness Check
+      // 5. Rate-Limit / Quota Pre-emptive Awareness Check
       if (!options.skipQuotaCheck) {
         const quota = await this.quotaTracker.checkAvailability(providerName);
         if (!quota.isAvailable) {
@@ -96,7 +115,7 @@ export class AiGatewayService {
         }
       }
 
-      // 5. Attempt execution with retries on current provider
+      // 6. Attempt execution with retries on current provider
       for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
         totalAttempts++;
         try {
@@ -106,14 +125,21 @@ export class AiGatewayService {
 
           const result: ProviderCompletionResult = await adapter.complete(request);
 
-          // 6. Record successful quota consumption in Redis
+          // 7. Record successful quota and spend
           await this.quotaTracker.recordUsage(providerName, result.usage.totalTokens);
+          await this.costBudgetService.recordSpend({
+            orgId: request.orgId || '00000000-0000-0000-0000-000000000000',
+            projectId: request.projectId || null,
+            agentId: request.agentId || null,
+            provider: providerName,
+            costUsd: result.costUsd,
+          });
 
           const isFallback = pIndex > 0;
           const status = isFallback ? 'fallback_success' : 'success';
           const totalLatencyMs = Date.now() - totalStartTime;
 
-          // 7. Write completion to Audit Log
+          // 8. Write completion to Audit Log
           const auditLog = await this.auditLogRepository.create({
             orgId: request.orgId || '00000000-0000-0000-0000-000000000000',
             projectId: request.projectId || null,
