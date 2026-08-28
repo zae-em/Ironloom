@@ -154,6 +154,14 @@ export class OrchestrationService {
     return this.repo.listApprovalRequests(projectId);
   }
 
+  async listAllApprovalRequests(orgId?: string): Promise<ApprovalRequest[]> {
+    return this.repo.listAllApprovalRequests(orgId);
+  }
+
+  async listAllWorkflowRuns(orgId?: string): Promise<WorkflowRun[]> {
+    return this.repo.listAllWorkflowRuns(orgId);
+  }
+
   async getApprovalRequest(id: string): Promise<ApprovalRequest> {
     return this.repo.getApprovalRequest(id);
   }

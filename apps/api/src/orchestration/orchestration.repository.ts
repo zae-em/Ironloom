@@ -332,4 +332,81 @@ export class OrchestrationRepository {
       .filter((a) => a.projectId === projectId)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
+
+  async listAllApprovalRequests(orgId?: string): Promise<ApprovalRequest[]> {
+    if (this.supabaseService.isServerAvailable()) {
+      const admin = this.supabaseService.getAdminClient();
+      try {
+        let query = admin
+          .from('approval_requests')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (orgId) {
+          query = query.eq('org_id', orgId);
+        }
+
+        const { data, error } = await query;
+        if (!error && data && data.length > 0) {
+          return data.map((d: any) => ({
+            id: d.id,
+            orgId: d.org_id,
+            projectId: d.project_id,
+            workflowRunId: d.workflow_run_id,
+            nodeName: d.node_name,
+            payloadToReview: d.payload_to_review,
+            status: d.status,
+            decidedBy: d.decided_by,
+            decidedAt: d.decided_at,
+            notes: d.notes,
+            actionType: d.action_type || 'gate_approval',
+            autoApproved: d.auto_approved ?? false,
+            matchedPolicyId: d.matched_policy_id || null,
+            createdAt: d.created_at,
+          }));
+        }
+      } catch {}
+    }
+
+    return Array.from(this.memoryApprovalRequests.values())
+      .filter((a) => !orgId || a.orgId === orgId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async listAllWorkflowRuns(orgId?: string): Promise<WorkflowRun[]> {
+    if (this.supabaseService.isServerAvailable()) {
+      const admin = this.supabaseService.getAdminClient();
+      try {
+        let query = admin
+          .from('workflow_runs')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (orgId) {
+          query = query.eq('org_id', orgId);
+        }
+
+        const { data, error } = await query;
+        if (!error && data && data.length > 0) {
+          return data.map((d: any) => ({
+            id: d.id,
+            orgId: d.org_id,
+            projectId: d.project_id,
+            name: d.name,
+            currentNode: d.current_node,
+            status: d.status,
+            statePayload: d.state_payload,
+            startedAt: d.created_at,
+            updatedAt: d.updated_at,
+            completedAt: d.completed_at,
+            error: d.error,
+          }));
+        }
+      } catch {}
+    }
+
+    return Array.from(this.memoryWorkflowRuns.values())
+      .filter((r) => !orgId || r.orgId === orgId)
+      .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+  }
 }

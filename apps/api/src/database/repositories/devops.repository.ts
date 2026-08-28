@@ -106,6 +106,12 @@ export class DevOpsRepository {
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
+  async listAllDeployments(): Promise<DeploymentEntity[]> {
+    return [...this.deployments].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
   // ==========================================
   // INCIDENTS
   // ==========================================
@@ -131,6 +137,16 @@ export class DevOpsRepository {
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
+  async listAllIncidents(status?: IncidentEntity['status']): Promise<IncidentEntity[]> {
+    return this.incidents
+      .filter((i) => !status || i.status === status)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async getIncident(id: string): Promise<IncidentEntity | null> {
+    return this.incidents.find((i) => i.id === id) || null;
+  }
+
   async updateIncidentStatus(
     id: string,
     status: IncidentEntity['status'],
@@ -148,14 +164,25 @@ export class DevOpsRepository {
   // ==========================================
   // APPROVAL POLICIES
   // ==========================================
-  async createApprovalPolicy(
-    dto: Omit<ApprovalPolicy, 'id' | 'createdAt' | 'updatedAt' | 'ruleDefinition'> & {
-      ruleDefinition?: Partial<ApprovalPolicy['ruleDefinition']>;
-    },
-  ): Promise<ApprovalPolicy> {
+  async createApprovalPolicy(dto: {
+    orgId: string;
+    projectId?: string | null;
+    name?: string;
+    description?: string;
+    actionType: ApprovalPolicy['actionType'];
+    environmentPattern?: string;
+    ruleDefinition?: Partial<ApprovalPolicy['ruleDefinition']>;
+    enabled?: boolean;
+  }): Promise<ApprovalPolicy> {
     const policy: ApprovalPolicy = {
       id: uuidv4(),
-      ...dto,
+      orgId: dto.orgId,
+      projectId: dto.projectId || null,
+      name: dto.name || 'Deployment Approval Policy',
+      description: dto.description || '',
+      actionType: dto.actionType,
+      environmentPattern: dto.environmentPattern || '*',
+      enabled: dto.enabled ?? true,
       ruleDefinition: {
         autoApproveStagingIfSmokePassed:
           dto.ruleDefinition?.autoApproveStagingIfSmokePassed ?? true,
@@ -169,6 +196,48 @@ export class DevOpsRepository {
     };
     this.approvalPolicies.push(policy);
     return policy;
+  }
+
+  async getApprovalPolicy(id: string): Promise<ApprovalPolicy | null> {
+    return this.approvalPolicies.find((p) => p.id === id) || null;
+  }
+
+  async updateApprovalPolicy(
+    id: string,
+    updates: {
+      name?: string;
+      description?: string;
+      actionType?: ApprovalPolicy['actionType'];
+      environmentPattern?: string;
+      enabled?: boolean;
+      ruleDefinition?: Partial<ApprovalPolicy['ruleDefinition']>;
+    },
+  ): Promise<ApprovalPolicy | null> {
+    const policy = this.approvalPolicies.find((p) => p.id === id);
+    if (policy) {
+      if (updates.name) policy.name = updates.name;
+      if (updates.description !== undefined) policy.description = updates.description;
+      if (updates.actionType) policy.actionType = updates.actionType;
+      if (updates.environmentPattern) policy.environmentPattern = updates.environmentPattern;
+      if (updates.enabled !== undefined) policy.enabled = updates.enabled;
+      if (updates.ruleDefinition) {
+        policy.ruleDefinition = {
+          ...policy.ruleDefinition,
+          ...updates.ruleDefinition,
+        };
+      }
+      policy.updatedAt = new Date().toISOString();
+    }
+    return policy || null;
+  }
+
+  async deleteApprovalPolicy(id: string): Promise<boolean> {
+    const idx = this.approvalPolicies.findIndex((p) => p.id === id);
+    if (idx !== -1) {
+      this.approvalPolicies.splice(idx, 1);
+      return true;
+    }
+    return false;
   }
 
   async findActivePolicy(

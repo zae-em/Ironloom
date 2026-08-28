@@ -77,6 +77,11 @@ export class OrchestrationController {
     return this.orchestrationService.listApprovalRequests(projectId);
   }
 
+  @Get('approvals')
+  async listUnifiedApprovals(@CurrentOrg() orgId: string) {
+    return this.orchestrationService.listAllApprovalRequests(orgId);
+  }
+
   @Post('approvals/:id/decide')
   async decideApproval(
     @Param('id') id: string,

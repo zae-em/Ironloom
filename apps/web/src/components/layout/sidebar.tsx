@@ -16,6 +16,10 @@ import {
   LogOut,
   ChevronRight,
   GitBranch,
+  Rocket,
+  Activity,
+  Inbox,
+  Code2,
 } from 'lucide-react';
 
 interface NavItem {
@@ -31,9 +35,12 @@ export function Sidebar() {
   const { user, userRole, signOut } = useAuth();
 
   const navItems: NavItem[] = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Command Center', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Workflows', href: '/workflows', icon: GitBranch, badge: 'Live' },
-    { name: 'Engineering', href: '/engineering', icon: GitBranch, badge: 'P4' },
+    { name: 'Deployments', href: '/deployments', icon: Rocket, badge: 'P5' },
+    { name: 'Monitoring & SRE', href: '/monitoring', icon: Activity, badge: 'Live' },
+    { name: 'Approvals Inbox', href: '/approvals', icon: Inbox, badge: 'Live' },
+    { name: 'Engineering', href: '/engineering', icon: Code2, badge: 'P4' },
     { name: 'Requirements', href: '/requirements', icon: FileText, badge: 'P4' },
     { name: 'Tasks', href: '/tasks', icon: CheckSquare, badge: 'P6' },
     { name: 'Agents', href: '/agents', icon: Bot, badge: 'P3' },

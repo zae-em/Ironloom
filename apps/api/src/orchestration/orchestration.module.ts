@@ -36,7 +36,7 @@ import { MonitoringAgent } from '../agents/sdlc/monitoring.agent';
     AgentsCoreModule,
     McpModule,
     SandboxModule,
-    DevOpsModule,
+    forwardRef(() => DevOpsModule),
   ],
   controllers: [OrchestrationController, McpController],
   providers: [
@@ -59,6 +59,8 @@ import { MonitoringAgent } from '../agents/sdlc/monitoring.agent';
     OrchestrationRepository,
     WorkflowDecisionService,
     SdlcGraphEngine,
+    DevOpsAgent,
+    MonitoringAgent,
   ],
 })
 export class OrchestrationModule {}

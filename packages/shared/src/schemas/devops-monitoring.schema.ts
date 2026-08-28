@@ -25,7 +25,7 @@ export const DeploymentEntitySchema = z.object({
   version: z.string(),
   commitHash: z.string().optional(),
   status: z.enum(['pending', 'running', 'success', 'failed', 'rolled_back']).default('pending'),
-  initiatedBy: z.enum(['agent', 'user']).default('agent'),
+  initiatedBy: z.enum(['agent', 'user', 'human']).default('agent'),
   promotedFrom: z.enum(['dev', 'staging', 'none']).default('none'),
   releaseNotes: z.string().default(''),
   manifests: z.record(z.string()).default({}),
@@ -85,7 +85,10 @@ export const ApprovalPolicySchema = z.object({
   id: z.string().uuid(),
   orgId: z.string().uuid(),
   projectId: z.string().uuid().optional().nullable(),
+  name: z.string().default('Deployment Approval Policy'),
+  description: z.string().default(''),
   actionType: z.enum(['deploy', 'rollback', 'scale', 'pr_merge', 'staging_promote']),
+  environmentPattern: z.string().default('*'),
   ruleDefinition: ApprovalPolicyRuleDefinitionSchema,
   enabled: z.boolean().default(true),
   createdAt: z.string().datetime(),
@@ -135,3 +138,55 @@ export const MonitoringAgentOutputSchema = z.object({
   summary: z.string(),
 });
 export type MonitoringAgentOutput = z.infer<typeof MonitoringAgentOutputSchema>;
+
+// REST Interaction DTOs
+export const PromoteEnvironmentDtoSchema = z.object({
+  environment: z.enum(['dev', 'staging', 'prod']),
+  version: z.string().optional().default('v1.0.0'),
+  targetEnvironment: z.enum(['dev', 'staging', 'prod']),
+  notes: z.string().optional(),
+});
+export type PromoteEnvironmentDto = z.infer<typeof PromoteEnvironmentDtoSchema>;
+
+export const RollbackEnvironmentDtoSchema = z.object({
+  environment: z.enum(['dev', 'staging', 'prod']),
+  targetVersion: z.string(),
+  reason: z.string().optional().default('Manual rollback requested'),
+});
+export type RollbackEnvironmentDto = z.infer<typeof RollbackEnvironmentDtoSchema>;
+
+export const CreateIncidentDtoSchema = z.object({
+  title: z.string().min(1),
+  summary: z.string().min(1),
+  environment: z.enum(['dev', 'staging', 'prod']).default('prod'),
+  severity: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+  source: z.enum(['monitoring', 'manual']).default('manual'),
+  telemetrySnapshot: MetricTelemetrySnapshotSchema.optional().nullable(),
+});
+export type CreateIncidentDto = z.infer<typeof CreateIncidentDtoSchema>;
+
+export const CreateApprovalPolicyDtoSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional().default(''),
+  actionType: z
+    .enum(['deploy', 'rollback', 'scale', 'pr_merge', 'staging_promote'])
+    .default('deploy'),
+  environmentPattern: z.string().optional().default('*'),
+  ruleDefinition: ApprovalPolicyRuleDefinitionSchema.partial().optional(),
+  enabled: z.boolean().optional().default(true),
+});
+export type CreateApprovalPolicyDto = z.infer<typeof CreateApprovalPolicyDtoSchema>;
+
+export const CommandCenterSummarySchema = z.object({
+  systemHealthStatus: z.enum(['healthy', 'degraded', 'critical']),
+  uptimePercentage: z.number().default(99.98),
+  activeWorkflowsCount: z.number(),
+  pausedApprovalsCount: z.number(),
+  failedWorkflowsCount: z.number(),
+  totalDeploymentsCount: z.number(),
+  openIncidentsCount: z.number(),
+  recentDeployments: z.array(DeploymentEntitySchema),
+  openIncidents: z.array(IncidentEntitySchema),
+  pendingApprovals: z.array(z.any()),
+});
+export type CommandCenterSummary = z.infer<typeof CommandCenterSummarySchema>;
